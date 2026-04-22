@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop — ROUNIK | Browse All Collections</title>
+  <meta name="description" content="Shop ROUNIK's full collection — Sarees, Bridal Wear, Kurtis, Churidar, Western Wear & Couture. Order directly on WhatsApp.">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    .shop-layout { display: grid; grid-template-columns: 240px 1fr; gap: 2.5rem; padding: 40px 5% 80px; }
+    .sidebar {
+      position: sticky; top: 90px; height: fit-content;
+      background: var(--white); border-radius: var(--radius);
+      padding: 1.5rem; box-shadow: var(--shadow); border: 1px solid var(--border);
+    }
+    .sidebar-title { font-size: 0.75rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 1rem; margin-top: 1.5rem; }
+    .sidebar-title:first-child { margin-top: 0; }
+    .sidebar-cat {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 12px; border-radius: 8px; cursor: pointer;
+      font-size: 0.88rem; color: var(--charcoal); transition: var(--transition);
+      border: 1.5px solid transparent; margin-bottom: 4px;
+    }
+    .sidebar-cat:hover { background: var(--sage-light); color: var(--sage-dark); }
+    .sidebar-cat.active { background: var(--sage); color: var(--white); border-color: var(--sage); }
+    .sidebar-cat .cat-badge {
+      font-size: 0.7rem; background: rgba(0,0,0,0.08); padding: 2px 6px; border-radius: 50px;
+    }
+    .sidebar-cat.active .cat-badge { background: rgba(255,255,255,0.2); }
+    .sort-select {
+      width: 100%; padding: 8px 12px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-family: 'Jost', sans-serif; font-size: 0.85rem;
+      color: var(--charcoal); background: var(--white); cursor: pointer;
+      outline: none; transition: var(--transition);
+    }
+    .sort-select:focus { border-color: var(--sage); }
+    .available-toggle {
+      display: flex; align-items: center; gap: 10px; cursor: pointer;
+      font-size: 0.85rem; color: var(--charcoal);
+    }
+    .toggle-switch {
+      width: 38px; height: 20px; background: var(--border); border-radius: 50px;
+      position: relative; transition: var(--transition);
+    }
+    .toggle-switch::after {
+      content: ''; position: absolute; left: 2px; top: 2px;
+      width: 16px; height: 16px; border-radius: 50%; background: var(--white);
+      transition: var(--transition);
+    }
+    .toggle-switch.on { background: var(--sage); }
+    .toggle-switch.on::after { left: 20px; }
+    .shop-main { min-width: 0; }
+    .shop-topbar {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;
+    }
+    .shop-topbar-title { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--sage-dark); }
+    .shop-topbar-count { font-size: 0.85rem; color: var(--muted); }
+    .active-filter-tag {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: var(--sage-light); color: var(--sage-dark);
+      padding: 4px 12px; border-radius: 50px; font-size: 0.8rem; font-weight: 500;
+      margin-bottom: 1.5rem;
+    }
+    .active-filter-tag button { background: none; border: none; cursor: pointer; color: var(--sage-dark); font-size: 0.9rem; line-height: 1; }
+    @media(max-width:800px) {
+      .shop-layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; padding: 1rem; }
+      .sidebar-title { width: 100%; margin-top: 0.5rem; }
+      .sidebar-cat { padding: 6px 12px; }
+      .sort-select { width: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">ROUNIK</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="shop.html" class="active">Shop</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li><a href="contact.html" class="nav-cta">Order Now</a></li>
+  </ul>
+  <div class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+<div class="mobile-menu">
+  <a href="index.html">Home</a>
+  <a href="shop.html">Shop</a>
+  <a href="about.html">About</a>
+  <a href="contact.html">Contact</a>
+</div>
+
+<!-- PAGE HERO -->
+<div class="page-hero">
+  <div class="breadcrumb"><a href="index.html">Home</a> <span>/</span> <span>Shop</span></div>
+  <span class="section-label">All Collections</span>
+  <h1 class="section-title">Browse Our Designs</h1>
+  <div class="divider"></div>
+  <p class="section-sub">Filter by category, sort by price, and order any piece directly on WhatsApp.</p>
+</div>
+
+<!-- SHOP LAYOUT -->
+<div class="shop-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-title">Category</div>
+    <div id="sidebar-cats"></div>
+
+    <div class="sidebar-title">Sort By</div>
+    <select class="sort-select" id="sort-select" onchange="applyFilters()">
+      <option value="default">Default</option>
+      <option value="price-low">Price: Low to High</option>
+      <option value="price-high">Price: High to Low</option>
+      <option value="name">Name A–Z</option>
+    </select>
+
+    <div class="sidebar-title">Availability</div>
+    <label class="available-toggle" onclick="toggleAvailable()">
+      <div class="toggle-switch" id="avail-toggle"></div>
+      <span id="avail-label">Show All</span>
+    </label>
+  </aside>
+
+  <!-- Main -->
+  <div class="shop-main">
+    <div class="shop-topbar">
+      <div>
+        <div class="shop-topbar-title" id="shop-heading">All Designs</div>
+        <div class="shop-topbar-count" id="shop-count"></div>
+      </div>
+    </div>
+    <div id="active-tag"></div>
+    <div class="products-grid" id="shop-grid"></div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand-name">ROUNIK</div>
+      <div class="footer-brand-tag">By Ruchi & Niki</div>
+      <p class="footer-brand-desc">Designed with passion, stitched with love. Mumbai, India.</p>
+    </div>
+    <div>
+      <div class="footer-col-title">Quick Links</div>
+      <div class="footer-links">
+        <a href="index.html">Home</a><a href="shop.html">Shop</a>
+        <a href="about.html">About</a><a href="contact.html">Contact</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Categories</div>
+      <div class="footer-links">
+        <a href="shop.html?cat=Sarees">Sarees</a>
+        <a href="shop.html?cat=Bridal+Wear">Bridal Wear</a>
+        <a href="shop.html?cat=Kurtis">Kurtis</a>
+        <a href="shop.html?cat=Churidar">Churidar</a>
+        <a href="shop.html?cat=Western+Wear">Western Wear</a>
+        <a href="shop.html?cat=Couture">Couture</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 ROUNIK. All rights reserved.</p>
+    <p>Made with ❤️ by <span style="color:var(--gold)">MarketMagix Studio</span></p>
+  </div>
+</footer>
+
+<a href="https://wa.me/919XXXXXXXXX?text=Hi%20ROUNIK!%20I%27d%20like%20to%20know%20more." target="_blank" class="floating-wa">
+  <div class="floating-wa-pulse"></div>💬
+</a>
+
+<div id="product-modal"></div>
+<script src="js/products.js"></script>
+<script>
+  let activeCategory = 'All';
+  let showAvailableOnly = false;
+
+  function buildSidebar() {
+    const container = document.getElementById('sidebar-cats');
+    const counts = { 'All': PRODUCTS.length };
+    CATEGORIES.slice(1).forEach(c => { counts[c] = PRODUCTS.filter(p => p.category === c).length; });
+
+    CATEGORIES.forEach(cat => {
+      const div = document.createElement('div');
+      div.className = 'sidebar-cat' + (cat === activeCategory ? ' active' : '');
+      div.innerHTML = `<span>${cat === 'All' ? '🛍 All' : cat}</span><span class="cat-badge">${counts[cat] || 0}</span>`;
+      div.onclick = () => {
+        activeCategory = cat;
+        document.querySelectorAll('.sidebar-cat').forEach(d => d.classList.remove('active'));
+        div.classList.add('active');
+        applyFilters();
+      };
+      container.appendChild(div);
+    });
+  }
+
+  function toggleAvailable() {
+    showAvailableOnly = !showAvailableOnly;
+    document.getElementById('avail-toggle').classList.toggle('on', showAvailableOnly);
+    document.getElementById('avail-label').textContent = showAvailableOnly ? 'In Stock Only' : 'Show All';
+    applyFilters();
+  }
+
+  function applyFilters() {
+    let filtered = activeCategory === 'All' ? [...PRODUCTS] : PRODUCTS.filter(p => p.category === activeCategory);
+    if (showAvailableOnly) filtered = filtered.filter(p => p.inStock);
+
+    const sort = document.getElementById('sort-select').value;
+    if (sort === 'price-low') filtered.sort((a,b) => a.price - b.price);
+    else if (sort === 'price-high') filtered.sort((a,b) => b.price - a.price);
+    else if (sort === 'name') filtered.sort((a,b) => a.name.localeCompare(b.name));
+
+    const grid = document.getElementById('shop-grid');
+    grid.innerHTML = '';
+
+    if (filtered.length === 0) {
+      grid.innerHTML = `<div class="no-products"><div style="font-size:3rem">🔍</div><p>No products found.</p></div>`;
+    } else {
+      filtered.forEach((p, i) => {
+        const card = createProductCard(p);
+        card.style.transitionDelay = `${i*50}ms`;
+        grid.appendChild(card);
+      });
+      setTimeout(() => grid.querySelectorAll('.fade-in').forEach(el => el.classList.add('visible')), 50);
+    }
+
+    document.getElementById('shop-heading').textContent = activeCategory === 'All' ? 'All Designs' : activeCategory;
+    document.getElementById('shop-count').textContent = `${filtered.length} item${filtered.length !== 1 ? 's' : ''}`;
+
+    // Active filter tag
+    const tagContainer = document.getElementById('active-tag');
+    if (activeCategory !== 'All') {
+      tagContainer.innerHTML = `<span class="active-filter-tag">
+        Filtered: ${activeCategory}
+        <button onclick="activeCategory='All';buildSidebar();applyFilters();">×</button>
+      </span>`;
+    } else {
+      tagContainer.innerHTML = '';
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    // Read URL param
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('cat')) activeCategory = params.get('cat');
+    buildSidebar();
+    applyFilters();
+    initNav();
+    initFadeObserver();
+  });
+</script>
+</body>
+</html>

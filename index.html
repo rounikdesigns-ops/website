@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ROUNIK — By Ruchi & Niki | Custom Designs. Timeless Elegance.</title>
+  <meta name="description" content="ROUNIK by Ruchi & Niki — Custom couture, bridal wear, ethnic and western wear. Designed with passion, stitched with love. C-201, Krishna apartment, opp milap petrol pump, s v road, Malad West, Mumbai 400064, India.">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* Home-only additions */
+    .hero { min-height: 100vh; padding-top: 70px; position: relative; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; }
+    .hero-left { display: flex; align-items: center; padding: 80px 5% 80px 8%; position: relative; z-index: 1; }
+    .hero-right { position: relative; overflow: hidden; }
+    .hero-right img { width: 100%; height: 100%; object-fit: cover; }
+    .hero-right::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(to right, var(--cream) 0%, transparent 30%);
+    }
+    .hero-tag {
+      position: absolute; bottom: 40px; left: -10px; z-index: 10;
+      background: var(--white); border-radius: var(--radius);
+      padding: 14px 20px; box-shadow: var(--shadow-lg);
+      display: flex; align-items: center; gap: 12px;
+    }
+    .collection-teaser {
+      padding: 70px 5%; background: var(--white);
+    }
+    .collection-grid {
+      display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1.2rem;
+      margin-top: 2.5rem;
+    }
+    .collection-card {
+      position: relative; overflow: hidden; border-radius: var(--radius);
+      cursor: pointer; transition: var(--transition);
+    }
+    .collection-card:hover { transform: scale(1.01); }
+    .collection-card img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.6s ease;
+    }
+    .collection-card:hover img { transform: scale(1.08); }
+    .collection-card.tall { aspect-ratio: 3/4; }
+    .collection-card.short { aspect-ratio: 4/5; }
+    .collection-card-label {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      background: linear-gradient(to top, rgba(30,30,30,0.85) 0%, transparent 100%);
+      padding: 2rem 1.2rem 1.2rem;
+      color: var(--white);
+    }
+    .col-cat { font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); }
+    .col-name { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; }
+    .col-count { font-size: 0.75rem; color: rgba(255,255,255,0.6); }
+    .collection-card-cta {
+      position: absolute; top: 12px; right: 12px;
+      background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: var(--white); padding: 6px 14px; border-radius: 50px;
+      font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase;
+      font-weight: 500;
+    }
+    .process-section { padding: 70px 5%; background: var(--sage-light); }
+    .process-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 2rem; margin-top: 3rem; }
+    .process-step { text-align: center; }
+    .process-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 3.5rem; font-weight: 300; color: var(--gold); opacity: 0.4; line-height: 1;
+    }
+    .process-icon { font-size: 2rem; margin: -0.5rem 0 0.8rem; }
+    .process-title { font-size: 0.9rem; font-weight: 600; color: var(--sage-dark); margin-bottom: 0.4rem; }
+    .process-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
+    .insta-strip { padding: 60px 5%; background: var(--white); }
+    .insta-grid { display: grid; grid-template-columns: repeat(6,1fr); gap: 0.5rem; margin-top: 2rem; }
+    .insta-item { aspect-ratio: 1; overflow: hidden; border-radius: 8px; position: relative; cursor: pointer; }
+    .insta-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
+    .insta-item:hover img { transform: scale(1.08); }
+    .insta-item::after {
+      content: '📷'; position: absolute; inset: 0;
+      background: rgba(107,140,107,0.7); display: flex; align-items: center;
+      justify-content: center; font-size: 1.5rem;
+      opacity: 0; transition: var(--transition);
+    }
+    .insta-item:hover::after { opacity: 1; }
+
+    @media(max-width:900px) {
+      .hero { grid-template-columns: 1fr; min-height: auto; }
+      .hero-left { padding: 100px 5% 3rem; }
+      .hero-right { height: 60vw; }
+      .collection-grid { grid-template-columns: 1fr 1fr; }
+      .collection-card.tall { grid-row: span 1; }
+      .process-grid { grid-template-columns: 1fr 1fr; }
+      .insta-grid { grid-template-columns: repeat(3,1fr); }
+    }
+    @media(max-width:600px) {
+      .collection-grid { grid-template-columns: 1fr; }
+      .process-grid { grid-template-columns: 1fr 1fr; }
+      .insta-grid { grid-template-columns: repeat(3,1fr); }
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">ROUNIK</a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Home</a></li>
+    <li><a href="shop.html">Shop</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+    <li><a href="contact.html" class="nav-cta">Order Now</a></li>
+  </ul>
+  <div class="hamburger" onclick="document.querySelector('.mobile-menu').classList.toggle('open')">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+<div class="mobile-menu">
+  <a href="index.html">Home</a>
+  <a href="shop.html">Shop</a>
+  <a href="about.html">About</a>
+  <a href="contact.html">Contact</a>
+  <a href="contact.html" style="color:var(--sage);">Order Now →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <div class="hero-eyebrow-line"></div>
+        <span>Mumbai, India</span>
+      </div>
+      <h1 class="hero-title">
+        Custom Designs.<br><em>Timeless</em><br>Elegance.
+      </h1>
+      <p class="hero-subtitle">
+        Couture, Navratri Collection, ethnic & western — crafted by hand, stitched with love. Every piece tells your story.
+      </p>
+      <div class="hero-buttons">
+        <a href="shop.html" class="btn btn-primary">Explore Collection</a>
+        <a href="contact.html" class="btn btn-outline">Order Custom Piece</a>
+      </div>
+      <div class="hero-stats">
+        <div>
+          <span class="hero-stat-num">200+</span>
+          <span class="hero-stat-label">Designs Made</span>
+        </div>
+        <div>
+          <span class="hero-stat-num">4</span>
+          <span class="hero-stat-label">Categories</span>
+        </div>
+        <div>
+          <span class="hero-stat-num">100%</span>
+          <span class="hero-stat-label">Custom Work</span>
+        </div>
+      </div>
+    </div>
+    <!-- Floating badge -->
+    <div class="hero-tag">
+      <span style="font-size:1.8rem">✨</span>
+      <div>
+        <div style="font-size:0.8rem;font-weight:600;color:var(--sage-dark)">By Ruchi & Niki</div>
+        <div style="font-size:0.7rem;color:var(--muted)">Designed with passion</div>
+      </div>
+    </div>
+  </div>
+  <div class="hero-right">
+    <img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=900&q=90" alt="ROUNIK Collection">
+    <div style="position:absolute;inset:0;background:linear-gradient(to right,var(--cream) 0%,transparent 20%)"></div>
+  </div>
+</section>
+
+<!-- CATEGORIES STRIP -->
+<div class="categories-strip">
+  <a href="shop.html?cat=Couture" class="cat-item">
+    <span class="cat-icon">👗</span><span class="cat-name">Luxury</span>
+  </a>
+  <a href="shop.html?cat=Bridal+Wear" class="cat-item">
+    <span class="cat-icon">💍</span><span class="cat-name">Navratri Collection</span>
+  </a>
+  <a href="shop.html?cat=Sarees" class="cat-item">
+    <span class="cat-icon">🪭</span><span class="cat-name">Kids Wear</span>
+  </a>
+  <a href="shop.html?cat=Kurtis" class="cat-item">
+    <span class="cat-icon">🌸</span><span class="cat-name">Kurtis</span>
+  </a>
+  <a href="shop.html?cat=Churidar" class="cat-item">
+    <span class="cat-icon">✨</span><span class="cat-name">Western Wear</span>
+  </a>
+</div>
+
+<!-- COLLECTION TEASERS -->
+<section class="collection-teaser">
+  <div class="section-header">
+    <span class="section-label">Our Collections</span>
+    <h2 class="section-title">Shop by Category</h2>
+    <div class="divider"></div>
+    <p class="section-sub">From everyday kurtis to modern day western wear — something beautiful for every occasion.</p>
+  </div>
+  <div class="collection-grid">
+    <div class="collection-card tall" onclick="location.href='shop.html?cat=Bridal+Wear'">
+      <img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?w=900&q=85" alt="Bridal Wear">
+      <span class="collection-card-cta">Shop Now</span>
+      <div class="collection-card-label">
+        <div class="col-cat">Featured</div>
+        <div class="col-name">Navratri Collection</div>
+        <div class="col-count">3 pieces</div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:1.2rem;">
+      <div class="collection-card short" onclick="location.href='shop.html?cat=Sarees'">
+        <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&q=85" alt="Sarees">
+        <div class="collection-card-label">
+          <div class="col-cat">Kids</div>
+          <div class="col-name">Wear</div>
+        </div>
+      </div>
+      <div class="collection-card short" onclick="location.href='shop.html?cat=Kurtis'">
+        <img src="https://res.cloudinary.com/dnzjoigp1/image/upload/v1776874262/Gemini_Generated_Image_d40ghld40ghld40g_nyfiky.png" alt="Kurtis">
+        <div class="collection-card-label">
+          <div class="col-cat">Everyday</div>
+          <div class="col-name">Kurtis</div>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:1.2rem;">
+      <div class="collection-card short" onclick="location.href='shop.html?cat=Couture'">
+        <img src="https://res.cloudinary.com/dnzjoigp1/image/upload/v1776874745/Gemini_Generated_Image_l4eu2ul4eu2ul4eu_mgdmzt.png" alt="Couture">
+        <div class="collection-card-label">
+          <div class="col-cat">Luxury</div>
+          <div class="col-name">Couture</div>
+        </div>
+      </div>
+      <div class="collection-card short" onclick="location.href='shop.html?cat=Western+Wear'">
+        <img src="https://res.cloudinary.com/dnzjoigp1/image/upload/v1776873502/Gemini_Generated_Image_upm7tfupm7tfupm7_nomnr7.png" alt="Western">
+        <div class="collection-card-label">
+          <div class="col-cat">Trending</div>
+          <div class="col-name">Western Wear</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED PRODUCTS -->
+<section class="section" style="background:var(--cream);">
+  <div class="section-header">
+    <span class="section-label">Handpicked For You</span>
+    <h2 class="section-title">Featured Pieces</h2>
+    <div class="divider"></div>
+    <p class="section-sub">Our most-loved designs — each one crafted with care and made to make you feel extraordinary.</p>
+  </div>
+  <div class="products-grid" id="featured-grid"></div>
+  <div style="text-align:center;margin-top:3rem;">
+    <a href="shop.html" class="btn btn-outline">View All Products →</a>
+  </div>
+</section>
+
+<!-- ABOUT STRIP -->
+<section class="about-strip">
+  <div>
+    <span class="section-label">Our Story</span>
+    <h2 class="section-title" style="color:rgba(255,255,255,0.95)">Born from a Passion for Beautiful Clothing</h2>
+    <div class="divider"></div>
+    <p class="section-sub">ROUNIK was born when two friends — Ruchi & Niki — decided that fashion should feel personal. Every stitch carries intention, every design tells a story.</p>
+    <div class="about-features">
+      <div class="about-feat">
+        <div class="about-feat-icon">✂️</div>
+        <div>
+          <div class="about-feat-title">Custom Made</div>
+          <div class="about-feat-desc">Every piece is stitched to your measurements and preferences.</div>
+        </div>
+      </div>
+      <div class="about-feat">
+        <div class="about-feat-icon">🪡</div>
+        <div>
+          <div class="about-feat-title">Premium Fabrics</div>
+          <div class="about-feat-desc">We source only the finest silks, georgettes and cotton blends.</div>
+        </div>
+      </div>
+      <div class="about-feat">
+        <div class="about-feat-icon">💌</div>
+        <div>
+          <div class="about-feat-title">Personal Service</div>
+          <div class="about-feat-desc">Order directly via WhatsApp. We're here every step of the way.</div>
+        </div>
+      </div>
+    </div>
+    <div style="margin-top:2rem;">
+      <a href="about.html" class="btn btn-gold">Our Full Story →</a>
+    </div>
+  </div>
+  <div class="about-image-wrap">
+    <img src="https://images.unsplash.com/photo-1594938291221-94f18cbb5a36?w=700&q=85" alt="ROUNIK Atelier">
+    <div class="about-image-tag">
+      <strong>5+</strong>
+      <span>Years of Craft</span>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="process-section">
+  <div class="section-header text-center">
+    <span class="section-label">How It Works</span>
+    <h2 class="section-title">Ordering is Simple</h2>
+    <div class="divider"></div>
+    <p class="section-sub">No complicated checkout. Just browse, tap, and connect with us directly.</p>
+  </div>
+  <div class="process-grid">
+    <div class="process-step fade-in">
+      <div class="process-num">01</div>
+      <div class="process-icon">👀</div>
+      <div class="process-title">Browse</div>
+      <div class="process-desc">Explore our collections and filter by your favourite category.</div>
+    </div>
+    <div class="process-step fade-in" style="transition-delay:0.1s">
+      <div class="process-num">02</div>
+      <div class="process-icon">💚</div>
+      <div class="process-title">Pick Your Piece</div>
+      <div class="process-desc">Found something you love? Tap the Order button on the product.</div>
+    </div>
+    <div class="process-step fade-in" style="transition-delay:0.2s">
+      <div class="process-num">03</div>
+      <div class="process-icon">📲</div>
+      <div class="process-title">Chat on WhatsApp</div>
+      <div class="process-desc">You'll be redirected to WhatsApp with the details pre-filled.</div>
+    </div>
+    <div class="process-step fade-in" style="transition-delay:0.3s">
+      <div class="process-num">04</div>
+      <div class="process-icon">📦</div>
+      <div class="process-title">Receive & Wear</div>
+      <div class="process-desc">We confirm, stitch, and deliver your dream outfit to you.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials">
+  <div class="section-header text-center">
+    <span class="section-label">Happy Customers</span>
+    <h2 class="section-title">What Our Clients Say</h2>
+    <div class="divider"></div>
+  </div>
+  <div class="testimonials-grid">
+    <div class="testimonial-card fade-in">
+      <div class="testimonial-stars">★★★★★</div>
+      <div class="testimonial-text">"My bridal lehenga was absolutely stunning. Ruchi understood my vision perfectly and delivered beyond expectations!"</div>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">👰</div>
+        <div>
+          <div class="testimonial-name">Priya Sharma</div>
+          <div class="testimonial-loc">Mumbai</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card fade-in" style="transition-delay:0.1s">
+      <div class="testimonial-stars">★★★★★</div>
+      <div class="testimonial-text">"The kurti I ordered fits like it was made for me — because it was! Ordering on WhatsApp was so easy and quick."</div>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">🌸</div>
+        <div>
+          <div class="testimonial-name">Ananya Desai</div>
+          <div class="testimonial-loc">Pune</div>
+        </div>
+      </div>
+    </div>
+    <div class="testimonial-card fade-in" style="transition-delay:0.2s">
+      <div class="testimonial-stars">★★★★★</div>
+      <div class="testimonial-text">"I've ordered 3 pieces from ROUNIK so far. Every single one has been perfect. The quality and attention to detail is unmatched."</div>
+      <div class="testimonial-author">
+        <div class="testimonial-avatar">✨</div>
+        <div>
+          <div class="testimonial-name">Meera Nair</div>
+          <div class="testimonial-loc">Delhi</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ORDER CTA -->
+<section class="order-cta">
+  <span class="section-label">Ready to Order?</span>
+  <h2 class="section-title">Let's Create Something<br>Beautiful Together</h2>
+  <div class="divider" style="margin:1rem auto 1.5rem;"></div>
+  <p class="section-sub">Browse our collection and order directly on WhatsApp. Custom sizes, custom designs — all welcome.</p>
+  <div class="order-cta-buttons" style="margin-top:2rem;">
+    <a href="shop.html" class="btn btn-primary">Browse Collection</a>
+    <a href="https://wa.me/919XXXXXXXXX?text=Hi%20ROUNIK!%20I%27d%20like%20to%20enquire%20about%20a%20custom%20piece." target="_blank" class="btn btn-whatsapp">📲 Chat on WhatsApp</a>
+  </div>
+</section>
+
+<!-- INSTAGRAM STRIP -->
+<section class="insta-strip">
+  <div class="section-header text-center">
+    <span class="section-label">Follow Our Journey</span>
+    <h2 class="section-title" style="font-size:1.8rem;">@Label by Ruchijain</h2>
+    <p class="section-sub" style="margin:0.5rem auto 0;">Follow us on Instagram for new drops and behind-the-scenes.</p>
+  </div>
+  <div class="insta-grid">
+    <div class="insta-item"><img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776874745/Gemini_Generated_Image_l4eu2ul4eu2ul4eu_mgdmzt.png" alt=""></div>
+    <div class="insta-item"><img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776874262/Gemini_Generated_Image_d40ghld40ghld40g_nyfiky.png" alt=""></div>
+    <div class="insta-item"><img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776873865/Gemini_Generated_Image_1q674c1q674c1q67_1_vcvjqr.png" alt=""></div>
+    <div class="insta-item"><img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776873502/Gemini_Generated_Image_upm7tfupm7tfupm7_nomnr7.png" alt=""></div>
+    <div class="insta-item"><img src="https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=300&q=80" alt=""></div>
+    <div class="insta-item"><img src="https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=300&q=80" alt=""></div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <div class="footer-brand-name">ROUNIK</div>
+      <div class="footer-brand-tag">By Ruchi & Niki</div>
+      <p class="footer-brand-desc">Designed with passion, stitched with love. Custom couture, bridal wear, ethnic and western wear from Mumbai.</p>
+      <div class="footer-social">
+        <a href="https://www.instagram.com/label_by_ruchijain?igsh=dGhienJyaDZvdXpx&utm_source=qr" target="_blank" class="social-btn">📸</a>
+        <a href="https://wa.me/919XXXXXXXXX" target="_blank" class="social-btn">💬</a>
+        <a href="mailto:ruchi02061991@gmail.com" class="social-btn">✉️</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Quick Links</div>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="shop.html">Shop</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
+    <div>
+      <div class="footer-col-title">Categories</div>
+      <div class="footer-links">
+        <a href="shop.html?cat=Sarees">Kids Wear</a>
+        <a href="shop.html?cat=Bridal+Wear">Navratri collection</a>
+        <a href="shop.html?cat=Kurtis">Kurtis</a>
+        <a href="shop.html?cat=Churidar">Indian Wear</a>
+        <a href="shop.html?cat=Western+Wear">Western Wear</a>
+        <a href="shop.html?cat=Couture">Couture</a>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2026 ROUNIK. All rights reserved. C-201, Krishna apartment, opp milap petrol pump, s v road, Malad West , Mumbai -400064, India</p>
+    <p>Made with ❤️ by <span style="color:var(--gold)">MarketMagix Studio</span></p>
+  </div>
+</footer>
+
+<!-- Floating WhatsApp -->
+<a href="https://wa.me/919XXXXXXXXX?text=Hi%20ROUNIK!%20I%27d%20like%20to%20know%20more%20about%20your%20collections." target="_blank" class="floating-wa">
+  <div class="floating-wa-pulse"></div>
+  💬
+</a>
+
+<div id="product-modal"></div>
+<script src="js/products.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    renderProducts('featured-grid', 'All', 4);
+    initFadeObserver();
+  });
+</script>
+</body>
+</html>

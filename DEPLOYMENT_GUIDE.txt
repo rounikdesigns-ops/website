@@ -1,0 +1,122 @@
+# ROUNIK Website — Deployment & Setup Guide
+# Prepared by MarketMagix Studio
+# ═══════════════════════════════════════════════════════════════
+
+## STEP 1 — Update WhatsApp Number
+─────────────────────────────────
+Open these files and replace ALL occurrences of:
+  919XXXXXXXXX
+with Ruchi's actual WhatsApp Business number (with country code, no + sign)
+Example: 919876543210
+
+Files to update:
+  - js/products.js    (line: const WHATSAPP_NUMBER = "919XXXXXXXXX")
+  - index.html        (3 places)
+  - shop.html         (1 place)
+  - about.html        (1 place)
+  - contact.html      (3 places — including the form action)
+
+
+## STEP 2 — Add Real Product Photos
+────────────────────────────────────
+1. Create free account at https://cloudinary.com
+2. Upload each product photo
+3. Copy the URL for each photo
+4. Open js/products.js
+5. Replace the image URLs in the PRODUCTS array with Cloudinary URLs
+
+
+## STEP 3 — Push to GitHub
+───────────────────────────
+1. Create free account at https://github.com
+2. Create a new repository called: rounik-website
+3. Upload all files from this folder to the repository
+   (or use Git commands if comfortable)
+
+
+## STEP 4 — Deploy on Netlify (FREE)
+──────────────────────────────────────
+1. Go to https://netlify.com and sign up for free
+2. Click "Add new site" → "Import an existing project"
+3. Connect your GitHub account and select rounik-website repo
+4. Click Deploy — site goes live in ~60 seconds!
+5. You'll get a URL like: https://rounik.netlify.app
+
+
+## STEP 5 — Buy & Connect Domain
+──────────────────────────────────
+1. Go to GoDaddy (https://www.godaddy.com/en-in/domains)
+   OR HostingRaja (https://www.hostingraja.in/domains/)
+2. Search for: rounik.in OR rounikdesigns.com
+3. Purchase the domain (~Rs. 600–1,200/year)
+4. In Netlify → Site Settings → Domain Management → Add custom domain
+5. Enter your purchased domain name
+6. Netlify gives you 2 nameserver addresses (e.g. dns1.p01.nsone.net)
+7. Go to your domain registrar → DNS Settings → Replace nameservers
+8. Wait 24–48 hours — your site is live on your custom domain!
+9. Netlify auto-enables FREE HTTPS (SSL) certificate
+
+
+## HOW RUCHI MANAGES PRODUCTS (Admin Panel)
+─────────────────────────────────────────────
+1. Go to: https://yourdomain.com/admin/
+2. Add new product: fill the form on the left
+3. Upload photo to Cloudinary → paste URL in Image URL field
+4. Save — product appears on the website immediately
+5. Edit any product: click the ✏ Edit button in the table
+6. Delete a product: click 🗑 Delete button
+7. Mark as Sold Out: edit → change Stock to "Sold Out" → save
+
+IMPORTANT NOTE ON ADMIN DATA:
+The current admin panel stores data in memory only.
+For persistent data that survives page refreshes, upgrade to
+Google Sheets integration (MarketMagix Studio can set this up).
+Upgrade cost: Rs. 2,000 one-time.
+
+
+## WEBSITE STRUCTURE
+─────────────────────
+rounik/
+├── index.html          ← Home page
+├── shop.html           ← Product gallery with filters
+├── about.html          ← About Ruchi & Niki
+├── contact.html        ← Contact + Custom Order form
+├── css/
+│   └── style.css       ← All styles
+├── js/
+│   └── products.js     ← Product data + WhatsApp logic + filters
+└── admin/
+    └── index.html      ← Seller admin panel
+
+
+## FILTER SYSTEM
+─────────────────
+The shop page has full category filtering:
+  All | Sarees | Bridal Wear | Kurtis | Churidar | Western Wear | Couture
+
+To add a new category:
+  - Open js/products.js
+  - Add the new category name to the CATEGORIES array
+  - Add products with that category name
+  - Filter button appears automatically
+
+
+## WHATSAPP INTEGRATION
+────────────────────────
+When a customer clicks "Order on WhatsApp":
+  → WhatsApp opens with pre-filled message:
+  "Hi ROUNIK! I'd like to order: [Product Name] — Rs. [Price]
+   Please confirm availability and delivery details."
+
+Custom Order form (Contact page):
+  → Collects Name, Category, Occasion, Budget, Description
+  → Opens WhatsApp with all details formatted neatly
+
+
+## SUPPORT
+───────────
+MarketMagix Studio
+For queries or issues:
+  → WhatsApp us for support
+
+Post-launch support: 15 days included
