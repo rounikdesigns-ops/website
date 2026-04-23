@@ -167,9 +167,11 @@ nav.scrolled { box-shadow: var(--shadow); }
 /* ── Hero ── */
 .hero {
   min-height: 100vh;
-  display: flex; align-items: center;
-  padding: 100px 5% 60px;
-  position: relative; overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding-top: 70px;
+  position: relative;
+  overflow: hidden;
 }
 .hero-bg {
   position: absolute; inset: 0; z-index: 0;
@@ -181,6 +183,11 @@ nav.scrolled { box-shadow: var(--shadow); }
 }
 .hero-circle-1 { width: 600px; height: 600px; top: -100px; right: -100px; }
 .hero-circle-2 { width: 400px; height: 400px; bottom: -50px; left: -100px; }
+.hero-left {
+  display: flex; align-items: center;
+  padding: 60px 5% 60px 8%;
+  position: relative; z-index: 1;
+}
 .hero-content { position: relative; z-index: 1; max-width: 580px; }
 .hero-eyebrow {
   display: flex; align-items: center; gap: 12px;
@@ -213,13 +220,30 @@ nav.scrolled { box-shadow: var(--shadow); }
   font-size: 0.75rem; color: var(--muted);
   letter-spacing: 1px; text-transform: uppercase;
 }
+
+/* ── Hero Right Image — responsive ── */
+.hero-right {
+  position: relative;
+  overflow: hidden;
+  min-height: 100%;
+}
+.hero-right img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  display: block;
+}
+
+/* keeps old .hero-image class working too */
 .hero-image {
-  position: absolute; right: 0; top: 0; bottom: 0;
-  width: 48%; z-index: 1;
+  position: relative;
+  overflow: hidden;
 }
 .hero-image img {
   width: 100%; height: 100%;
   object-fit: cover;
+  object-position: top center;
 }
 .hero-image-overlay {
   position: absolute; inset: 0;
@@ -572,21 +596,112 @@ footer {
 @media (max-width: 900px) {
   .nav-links { display: none; }
   .hamburger { display: flex; }
-  .hero { flex-direction: column; padding-top: 100px; }
-  .hero-image { position: relative; width: 100%; height: 400px; margin-top: 2rem; }
-  .hero-image-overlay { background: linear-gradient(to bottom, var(--cream) 0%, transparent 15%); }
   .about-strip { grid-template-columns: 1fr; }
   .about-image-wrap { aspect-ratio: 16/9; }
   .contact-grid { grid-template-columns: 1fr; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
 }
+
 @media (max-width: 600px) {
-  .hero-title { font-size: 2.8rem; }
-  .hero-stats { gap: 1.5rem; }
-  .footer-grid { grid-template-columns: 1fr; }
-  .hero-buttons { flex-direction: column; }
-  .categories-strip { gap: 1.5rem; justify-content: flex-start; padding: 1rem 5%; }
-  .filter-bar { gap: 0.5rem; }
+  /* Nav — bigger touch targets */
+  nav { padding: 0 4%; height: 62px; }
+
+  /* Mobile menu — full width, bigger links */
+  .mobile-menu {
+    padding: 1rem 4%;
+    gap: 0;
+  }
+  .mobile-menu a {
+    font-size: 1rem;
+    padding: 1rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  /* Categories strip — scrollable */
+  .categories-strip {
+    gap: 1.2rem;
+    justify-content: flex-start;
+    padding: 1rem 4%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .categories-strip::-webkit-scrollbar { display: none; }
+  .cat-name { font-size: 0.72rem; }
+
+  /* Products grid — 2 columns on mobile */
+  .products-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.8rem;
+  }
+
+  /* Product card — compact on mobile */
+  .product-info { padding: 0.8rem; }
+  .product-name { font-size: 0.95rem; }
+  .product-price { font-size: 1rem; }
+  .product-order-btn { padding: 8px; font-size: 0.72rem; }
+  .product-desc { display: none; } /* hide desc on mobile cards */
+
+  /* Section padding — tighter on mobile */
+  .section { padding: 50px 4%; }
+  .section-title { font-size: clamp(1.6rem, 6vw, 2.5rem); }
+
+  /* About strip */
+  .about-strip { padding: 50px 4%; gap: 2rem; }
+  .about-features { gap: 1rem; }
+
+  /* Footer — single column */
+  .footer-grid { grid-template-columns: 1fr; gap: 2rem; }
+  footer { padding: 40px 4% 20px; }
+  .footer-bottom { flex-direction: column; text-align: center; gap: 0.5rem; }
+
+  /* Filter bar on shop page */
+  .filter-bar { gap: 0.4rem; padding: 1rem; }
+  .filter-btn { padding: 6px 12px; font-size: 0.75rem; }
+
+  /* Testimonials — single column */
+  .testimonials-grid { grid-template-columns: 1fr; }
+
+  /* Order CTA */
+  .order-cta { padding: 50px 4%; }
+  .order-cta-buttons { flex-direction: column; align-items: stretch; }
+  .order-cta-buttons .btn { justify-content: center; }
+
+  /* Contact page */
+  .contact-grid { padding: 40px 4%; }
+
+  /* Floating WhatsApp — bigger on mobile */
+  .floating-wa {
+    width: 62px;
+    height: 62px;
+    font-size: 1.8rem;
+    bottom: 20px;
+    right: 16px;
+  }
+
+  /* Modal — full screen on mobile */
+  #product-modal { padding: 0; align-items: flex-end; }
+  .modal-content {
+    border-radius: 20px 20px 0 0;
+    max-height: 92vh;
+  }
+  .modal-grid { grid-template-columns: 1fr; }
+  .modal-images { padding: 1rem; }
+  .modal-main-img-wrap { aspect-ratio: 4/3; }
+  .modal-info { padding: 0 1rem 2rem; }
+  .modal-name { font-size: 1.4rem; }
+  .modal-price { font-size: 1.5rem; }
+
+  /* Process grid — 2 columns */
+  .process-grid { grid-template-columns: 1fr 1fr; gap: 1.2rem; }
+  .process-num { font-size: 2.5rem; }
+
+  /* Instagram grid — 3 columns */
+  .insta-grid { grid-template-columns: repeat(3, 1fr); gap: 0.3rem; }
+
+  /* Collection grid — single column */
+  .collection-grid { grid-template-columns: 1fr; gap: 0.8rem; }
+  .collection-card.tall { aspect-ratio: 4/3; }
 }
 
 /* ══════════════════════════════════════════════════════

@@ -4,96 +4,240 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ROUNIK — By Ruchi & Niki | Custom Designs. Timeless Elegance.</title>
-  <meta name="description" content="ROUNIK by Ruchi & Niki — Custom couture, Navratri Collection , Kids wear, ethnic and western wear. Designed with passion, stitched with love. C-201, Krishna apartment, opp milap petrol pump, s v road, Malad West, Mumbai 400064, India.">
+  <meta name="description" content="ROUNIK by Ruchi & Niki — Custom couture, Navratri Collection, Kids wear, ethnic and western wear. Designed with passion, stitched with love. C-201, Krishna apartment, opp milap petrol pump, s v road, Malad West, Mumbai 400064, India.">
   <link rel="stylesheet" href="css/style.css">
   <style>
-    /* Home-only additions */
-    .hero { min-height: 100vh; padding-top: 70px; position: relative; overflow: hidden; display: grid; grid-template-columns: 1fr 1fr; }
-    .hero-left { display: flex; align-items: center; padding: 80px 5% 80px 8%; position: relative; z-index: 1; }
-    .hero-right { position: relative; overflow: hidden; }
-    .hero-right img { width: 100%; height: 100%; object-fit: cover; }
-    .hero-right::after {
-      content: ''; position: absolute; inset: 0;
-      background: linear-gradient(to right, var(--cream) 0%, transparent 30%);
+    /* ═══════════════════════════════════════════
+       MOBILE FIRST HERO
+    ═══════════════════════════════════════════ */
+    .hero {
+      display: flex;
+      flex-direction: column;
+      padding-top: 62px;
+      min-height: 100svh;
+      position: relative;
+      overflow: hidden;
     }
-    .hero-tag {
-      position: absolute; bottom: 40px; left: -10px; z-index: 10;
-      background: var(--white); border-radius: var(--radius);
-      padding: 14px 20px; box-shadow: var(--shadow-lg);
-      display: flex; align-items: center; gap: 12px;
+
+    /* Image on top — mobile */
+    .hero-right {
+      order: 1;
+      width: 100%;
+      height: 62vw;
+      min-height: 260px;
+      max-height: 440px;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
     }
-    .collection-teaser {
-      padding: 70px 5%; background: var(--white);
+    .hero-right img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
     }
+    .hero-right .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, transparent 55%, var(--cream) 100%);
+    }
+
+    /* Text below image — mobile */
+    .hero-left {
+      order: 2;
+      padding: 1.2rem 5% 2.5rem;
+      display: flex;
+      align-items: flex-start;
+      background: var(--cream);
+      position: relative;
+      z-index: 1;
+    }
+    .hero-content { width: 100%; }
+
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 0.8rem;
+    }
+    .hero-eyebrow-line { width: 30px; height: 1px; background: var(--gold); flex-shrink: 0; }
+    .hero-eyebrow span {
+      font-size: 0.68rem;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--muted);
+      font-weight: 500;
+      line-height: 1.4;
+    }
+
+    .hero-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.2rem, 8vw, 3.5rem);
+      font-weight: 300;
+      line-height: 1.05;
+      color: var(--sage-dark);
+      margin-bottom: 0.8rem;
+    }
+    .hero-title em { font-style: italic; color: var(--gold); }
+
+    .hero-subtitle {
+      font-size: 0.875rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      margin-bottom: 1.8rem;
+    }
+    .hero-buttons .btn {
+      width: 100%;
+      justify-content: center;
+      padding: 14px 20px;
+      font-size: 0.82rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 1.5rem;
+      padding-top: 1.2rem;
+      border-top: 1px solid var(--border);
+    }
+    .hero-stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.7rem;
+      font-weight: 600;
+      color: var(--sage-dark);
+      display: block;
+      line-height: 1;
+    }
+    .hero-stat-label {
+      font-size: 0.65rem;
+      color: var(--muted);
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    /* Hide on mobile */
+    .hero-tag { display: none; }
+
+    /* ── Collection Teaser ── */
+    .collection-teaser { padding: 50px 4%; background: var(--white); }
     .collection-grid {
-      display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 1.2rem;
-      margin-top: 2.5rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.8rem;
+      margin-top: 2rem;
     }
     .collection-card {
-      position: relative; overflow: hidden; border-radius: var(--radius);
-      cursor: pointer; transition: var(--transition);
+      position: relative; overflow: hidden;
+      border-radius: var(--radius); cursor: pointer;
+      transition: var(--transition);
     }
     .collection-card:hover { transform: scale(1.01); }
     .collection-card img {
       width: 100%; height: 100%; object-fit: cover;
       transition: transform 0.6s ease;
     }
-    .collection-card:hover img { transform: scale(1.08); }
-    .collection-card.tall { aspect-ratio: 3/4; }
-    .collection-card.short { aspect-ratio: 4/5; }
+    .collection-card:hover img { transform: scale(1.06); }
+    .collection-card.tall { aspect-ratio: 3/4; grid-row: span 2; }
+    .collection-card.short { aspect-ratio: 1/1; }
     .collection-card-label {
       position: absolute; bottom: 0; left: 0; right: 0;
-      background: linear-gradient(to top, rgba(30,30,30,0.85) 0%, transparent 100%);
-      padding: 2rem 1.2rem 1.2rem;
+      background: linear-gradient(to top, rgba(20,20,20,0.88) 0%, transparent 100%);
+      padding: 1.5rem 1rem 0.9rem;
       color: var(--white);
     }
-    .col-cat { font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); }
-    .col-name { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 600; }
-    .col-count { font-size: 0.75rem; color: rgba(255,255,255,0.6); }
+    .col-cat { font-size: 0.62rem; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); }
+    .col-name { font-family: 'Cormorant Garamond', serif; font-size: 1.1rem; font-weight: 600; }
+    .col-count { font-size: 0.7rem; color: rgba(255,255,255,0.6); }
     .collection-card-cta {
-      position: absolute; top: 12px; right: 12px;
+      position: absolute; top: 10px; right: 10px;
       background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
       border: 1px solid rgba(255,255,255,0.3);
-      color: var(--white); padding: 6px 14px; border-radius: 50px;
-      font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase;
+      color: var(--white); padding: 5px 12px; border-radius: 50px;
+      font-size: 0.68rem; letter-spacing: 1px; text-transform: uppercase;
       font-weight: 500;
     }
-    .process-section { padding: 70px 5%; background: var(--sage-light); }
-    .process-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 2rem; margin-top: 3rem; }
+
+    /* ── Process Section ── */
+    .process-section { padding: 50px 4%; background: var(--sage-light); }
+    .process-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-top: 2.5rem;
+    }
     .process-step { text-align: center; }
     .process-num {
       font-family: 'Cormorant Garamond', serif;
-      font-size: 3.5rem; font-weight: 300; color: var(--gold); opacity: 0.4; line-height: 1;
+      font-size: 2.8rem; font-weight: 300; color: var(--gold);
+      opacity: 0.4; line-height: 1;
     }
-    .process-icon { font-size: 2rem; margin: -0.5rem 0 0.8rem; }
-    .process-title { font-size: 0.9rem; font-weight: 600; color: var(--sage-dark); margin-bottom: 0.4rem; }
-    .process-desc { font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
-    .insta-strip { padding: 60px 5%; background: var(--white); }
-    .insta-grid { display: grid; grid-template-columns: repeat(6,1fr); gap: 0.5rem; margin-top: 2rem; }
-    .insta-item { aspect-ratio: 1; overflow: hidden; border-radius: 8px; position: relative; cursor: pointer; }
-    .insta-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
-    .insta-item:hover img { transform: scale(1.08); }
-    .insta-item::after {
-      content: '📷'; position: absolute; inset: 0;
-      background: rgba(107,140,107,0.7); display: flex; align-items: center;
-      justify-content: center; font-size: 1.5rem;
-      opacity: 0; transition: var(--transition);
-    }
-    .insta-item:hover::after { opacity: 1; }
+    .process-icon { font-size: 1.8rem; margin: -0.4rem 0 0.6rem; }
+    .process-title { font-size: 0.85rem; font-weight: 600; color: var(--sage-dark); margin-bottom: 0.3rem; }
+    .process-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.6; }
 
-    @media(max-width:900px) {
-      .hero { grid-template-columns: 1fr; min-height: auto; }
-      .hero-left { padding: 100px 5% 3rem; }
-      .hero-right { height: 60vw; }
-      .collection-grid { grid-template-columns: 1fr 1fr; }
-      .collection-card.tall { grid-row: span 1; }
-      .process-grid { grid-template-columns: 1fr 1fr; }
-      .insta-grid { grid-template-columns: repeat(3,1fr); }
+    /* ── Instagram Strip ── */
+    .insta-strip { padding: 50px 4%; background: var(--white); }
+    .insta-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.4rem;
+      margin-top: 1.5rem;
     }
-    @media(max-width:600px) {
-      .collection-grid { grid-template-columns: 1fr; }
-      .process-grid { grid-template-columns: 1fr 1fr; }
-      .insta-grid { grid-template-columns: repeat(3,1fr); }
+    .insta-item {
+      aspect-ratio: 1; overflow: hidden;
+      border-radius: 8px; position: relative; cursor: pointer;
+    }
+    .insta-item img {
+      width: 100%; height: 100%; object-fit: cover;
+      transition: transform 0.5s ease;
+    }
+    .insta-item:hover img { transform: scale(1.08); }
+
+    /* ═══════════════════════════════════════════
+       TABLET & DESKTOP — side by side hero
+    ═══════════════════════════════════════════ */
+    @media (min-width: 900px) {
+      .hero {
+        flex-direction: row;
+        align-items: stretch;
+        min-height: 100vh;
+        padding-top: 70px;
+      }
+      .hero-left {
+        order: 1;
+        width: 52%;
+        padding: 80px 4% 80px 8%;
+        align-items: center;
+      }
+      .hero-right {
+        order: 2;
+        width: 48%;
+        height: auto;
+        max-height: none;
+        min-height: 100%;
+      }
+      .hero-right .hero-overlay {
+        background: linear-gradient(to right, var(--cream) 0%, transparent 25%);
+      }
+      .hero-title { font-size: clamp(3rem, 4.5vw, 5rem); }
+      .hero-buttons { flex-direction: row; flex-wrap: wrap; }
+      .hero-buttons .btn { width: auto; }
+      .hero-tag { display: flex; }
+
+      .collection-grid { grid-template-columns: 2fr 1fr 1fr; gap: 1.2rem; margin-top: 2.5rem; }
+      .collection-card.short { aspect-ratio: 4/5; }
+      .collection-teaser { padding: 70px 5%; }
+      .process-section { padding: 70px 5%; }
+      .process-grid { grid-template-columns: repeat(4, 1fr); gap: 2rem; }
+      .insta-strip { padding: 60px 5%; }
+      .insta-grid { grid-template-columns: repeat(6, 1fr); gap: 0.5rem; }
     }
   </style>
 </head>
@@ -123,11 +267,15 @@
 
 <!-- HERO -->
 <section class="hero">
+  <div class="hero-right">
+    <img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776955936/IMG_5686_1_akbjzh.jpg" alt="ROUNIK Collection">
+    <div class="hero-overlay"></div>
+  </div>
   <div class="hero-left">
     <div class="hero-content">
       <div class="hero-eyebrow">
         <div class="hero-eyebrow-line"></div>
-        <span> C-201, Krishna apartment, opp milap petrol pump, s v road, Malad West , Mumbai -400064, India</span>
+        <span>C-201, Krishna Apartment, Malad West, Mumbai - 400064</span>
       </div>
       <h1 class="hero-title">
         Custom Designs.<br><em>Timeless</em><br>Elegance.
@@ -155,10 +303,6 @@
       </div>
     </div>
   </div>
-  <div class="hero-right">
-    <img src="https://res.cloudinary.com/dnzjoigp1/image/upload/v1776874262/Gemini_Generated_Image_d40ghld40ghld40g_nyfiky.png" alt="ROUNIK Collection">
-    <div style="position:absolute;inset:0;background:linear-gradient(to right,var(--cream) 0%,transparent 20%)"></div>
-  </div>
 </section>
 
 <!-- CATEGORIES STRIP -->
@@ -167,16 +311,16 @@
     <span class="cat-icon">👗</span><span class="cat-name">Luxury</span>
   </a>
   <a href="shop.html?cat=Bridal+Wear" class="cat-item">
-    <span class="cat-icon">💍</span><span class="cat-name">Navratri Collection</span>
+    <span class="cat-icon">🪭</span><span class="cat-name">Navratri</span>
   </a>
   <a href="shop.html?cat=Sarees" class="cat-item">
-    <span class="cat-icon">🪭</span><span class="cat-name">Kids Wear</span>
+    <span class="cat-icon">👶</span><span class="cat-name">Kids Wear</span>
   </a>
   <a href="shop.html?cat=Kurtis" class="cat-item">
     <span class="cat-icon">🌸</span><span class="cat-name">Kurtis</span>
   </a>
-  <a href="shop.html?cat=Churidar" class="cat-item">
-    <span class="cat-icon">✨</span><span class="cat-name">Western Wear</span>
+  <a href="shop.html?cat=Western+Wear" class="cat-item">
+    <span class="cat-icon">✨</span><span class="cat-name">Western</span>
   </a>
 </div>
 
@@ -186,47 +330,49 @@
     <span class="section-label">Our Collections</span>
     <h2 class="section-title">Shop by Category</h2>
     <div class="divider"></div>
-    <p class="section-sub">From everyday kurtis to modern day western wear — something beautiful for every occasion.</p>
+    <p class="section-sub">From everyday kurtis to modern western wear — something beautiful for every occasion.</p>
   </div>
   <div class="collection-grid">
+    <!-- Featured large card -->
     <div class="collection-card tall" onclick="location.href='shop.html?cat=Bridal+Wear'">
-      <img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776955936/IMG_5686_1_akbjzh.jpg" alt="Bridal Wear">
+      <img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776955936/IMG_5686_1_akbjzh.jpg" alt="Navratri Collection">
       <span class="collection-card-cta">Shop Now</span>
       <div class="collection-card-label">
         <div class="col-cat">Featured</div>
         <div class="col-name">Navratri Collection</div>
-        <div class="col-count">3 pieces</div>
       </div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:1.2rem;">
-      <div class="collection-card short" onclick="location.href='shop.html?cat=Sarees'">
-        <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&q=85" alt="Sarees">
-        <div class="collection-card-label">
-          <div class="col-cat">Kids</div>
-          <div class="col-name">Wear</div>
-        </div>
-      </div>
+    <!-- Small cards column -->
+    <div style="display:flex;flex-direction:column;gap:0.8rem;">
       <div class="collection-card short" onclick="location.href='shop.html?cat=Kurtis'">
-        <img src="https://res.cloudinary.com/dnzjoigp1/image/upload/v1776874262/Gemini_Generated_Image_d40ghld40ghld40g_nyfiky.png" alt="Kurtis">
+        <img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776874262/Gemini_Generated_Image_d40ghld40ghld40g_nyfiky.png" alt="Kurtis">
         <div class="collection-card-label">
           <div class="col-cat">Everyday</div>
           <div class="col-name">Kurtis</div>
         </div>
       </div>
+      <div class="collection-card short" onclick="location.href='shop.html?cat=Western+Wear'">
+        <img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776873502/Gemini_Generated_Image_upm7tfupm7tfupm7_nomnr7.png" alt="Western Wear">
+        <div class="collection-card-label">
+          <div class="col-cat">Trending</div>
+          <div class="col-name">Western Wear</div>
+        </div>
+      </div>
     </div>
-    <div style="display:flex;flex-direction:column;gap:1.2rem;">
+    <!-- Desktop only: third column -->
+    <div style="display:flex;flex-direction:column;gap:0.8rem;" class="desktop-col">
       <div class="collection-card short" onclick="location.href='shop.html?cat=Couture'">
-        <img src="https://res.cloudinary.com/dnzjoigp1/image/upload/v1776874745/Gemini_Generated_Image_l4eu2ul4eu2ul4eu_mgdmzt.png" alt="Couture">
+        <img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776874745/Gemini_Generated_Image_l4eu2ul4eu2ul4eu_mgdmzt.png" alt="Couture">
         <div class="collection-card-label">
           <div class="col-cat">Luxury</div>
           <div class="col-name">Couture</div>
         </div>
       </div>
-      <div class="collection-card short" onclick="location.href='shop.html?cat=Western+Wear'">
-        <img src="https://res.cloudinary.com/dnzjoigp1/image/upload/v1776873502/Gemini_Generated_Image_upm7tfupm7tfupm7_nomnr7.png" alt="Western">
+      <div class="collection-card short" onclick="location.href='shop.html?cat=Sarees'">
+        <img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776873865/Gemini_Generated_Image_1q674c1q674c1q67_1_vcvjqr.png" alt="Kids Wear">
         <div class="collection-card-label">
-          <div class="col-cat">Trending</div>
-          <div class="col-name">Western Wear</div>
+          <div class="col-cat">Kids</div>
+          <div class="col-name">Kids Wear</div>
         </div>
       </div>
     </div>
@@ -242,7 +388,7 @@
     <p class="section-sub">Our most-loved designs — each one crafted with care and made to make you feel extraordinary.</p>
   </div>
   <div class="products-grid" id="featured-grid"></div>
-  <div style="text-align:center;margin-top:3rem;">
+  <div style="text-align:center;margin-top:2rem;">
     <a href="shop.html" class="btn btn-outline">View All Products →</a>
   </div>
 </section>
@@ -282,7 +428,7 @@
     </div>
   </div>
   <div class="about-image-wrap">
-    <img src="https://images.unsplash.com/photo-1594938291221-94f18cbb5a36?w=700&q=85" alt="ROUNIK Atelier">
+    <img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776956139/IMG_5669_dv0sug.jpg" alt="ROUNIK Atelier">
     <div class="about-image-tag">
       <strong>5+</strong>
       <span>Years of Craft</span>
@@ -336,7 +482,7 @@
   <div class="testimonials-grid">
     <div class="testimonial-card fade-in">
       <div class="testimonial-stars">★★★★★</div>
-      <div class="testimonial-text">"My Navaratri dress was absolutely stunning. Ruchi understood my vision perfectly and delivered beyond expectations!"</div>
+      <div class="testimonial-text">"My Navratri dress was absolutely stunning. Ruchi understood my vision perfectly and delivered beyond expectations!"</div>
       <div class="testimonial-author">
         <div class="testimonial-avatar">👰</div>
         <div>
@@ -386,16 +532,16 @@
 <section class="insta-strip">
   <div class="section-header text-center">
     <span class="section-label">Follow Our Journey</span>
-    <h2 class="section-title" style="font-size:1.8rem;">@Label by Ruchijain</h2>
+    <h2 class="section-title" style="font-size:clamp(1.4rem,5vw,1.8rem);">@label_by_ruchijain</h2>
     <p class="section-sub" style="margin:0.5rem auto 0;">Follow us on Instagram for new drops and behind-the-scenes.</p>
   </div>
   <div class="insta-grid">
-    <div class="insta-item"><img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776874745/Gemini_Generated_Image_l4eu2ul4eu2ul4eu_mgdmzt.png" alt=""></div>
-    <div class="insta-item"><img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776874262/Gemini_Generated_Image_d40ghld40ghld40g_nyfiky.png" alt=""></div>
-    <div class="insta-item"><img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776873865/Gemini_Generated_Image_1q674c1q674c1q67_1_vcvjqr.png" alt=""></div>
-    <div class="insta-item"><img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776873502/Gemini_Generated_Image_upm7tfupm7tfupm7_nomnr7.png" alt=""></div>
-    <div class="insta-item"><img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776955936/IMG_5686_1_akbjzh.jpg" alt=""></div>
-    <div class="insta-item"><img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776956139/IMG_5669_dv0sug.jpg" alt=""></div>
+    <div class="insta-item"><img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776874745/Gemini_Generated_Image_l4eu2ul4eu2ul4eu_mgdmzt.png" alt="ROUNIK Design 1"></div>
+    <div class="insta-item"><img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776874262/Gemini_Generated_Image_d40ghld40ghld40g_nyfiky.png" alt="ROUNIK Design 2"></div>
+    <div class="insta-item"><img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776873865/Gemini_Generated_Image_1q674c1q674c1q67_1_vcvjqr.png" alt="ROUNIK Design 3"></div>
+    <div class="insta-item"><img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776873502/Gemini_Generated_Image_upm7tfupm7tfupm7_nomnr7.png" alt="ROUNIK Design 4"></div>
+    <div class="insta-item"><img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776955936/IMG_5686_1_akbjzh.jpg" alt="ROUNIK Design 5"></div>
+    <div class="insta-item"><img src="https://res.cloudinary.com/dnzjoigp1/image/upload/q_auto/f_auto/v1776956139/IMG_5669_dv0sug.jpg" alt="ROUNIK Design 6"></div>
   </div>
 </section>
 
@@ -425,7 +571,7 @@
       <div class="footer-col-title">Categories</div>
       <div class="footer-links">
         <a href="shop.html?cat=Sarees">Kids Wear</a>
-        <a href="shop.html?cat=Bridal+Wear">Navratri collection</a>
+        <a href="shop.html?cat=Bridal+Wear">Navratri Collection</a>
         <a href="shop.html?cat=Kurtis">Kurtis</a>
         <a href="shop.html?cat=Churidar">Indian Wear</a>
         <a href="shop.html?cat=Western+Wear">Western Wear</a>
@@ -434,7 +580,7 @@
     </div>
   </div>
   <div class="footer-bottom">
-    <p>© 2026 ROUNIK. All rights reserved. C-201, Krishna apartment, opp milap petrol pump, s v road, Malad West , Mumbai -400064, India</p>
+    <p>© 2026 ROUNIK. All rights reserved. C-201, Krishna apartment, opp milap petrol pump, S V Road, Malad West, Mumbai - 400064</p>
     <p>Made with ❤️ by <span style="color:var(--gold)">MarketMagix Studio</span></p>
   </div>
 </footer>
