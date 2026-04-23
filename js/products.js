@@ -15,7 +15,7 @@ const WHATSAPP_NUMBER = "919XXXXXXXXX"; // ← Replace with Ruchi's number
 
 // ── Step 1: Paste your Google Sheet published CSV URL here ────────────────
 // Format: https://docs.google.com/spreadsheets/d/YOUR_ID/pub?output=csv
-const SHEET_CSV_URL = "YOUR_GOOGLE_SHEET_CSV_URL_HERE";
+const SHEET_CSV_URL = "https://script.google.com/macros/s/AKfycbyxp-UYHx19VBZrJHOBNNBYj75JNkpznaxLlQym0lYF9tY8TJyTfDi-ZZIgjCU_c7DV/exec";
 
 // ── Fallback products (shown while Sheet loads or if Sheet is not set up) ─
 const FALLBACK_PRODUCTS = [
