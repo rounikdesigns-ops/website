@@ -15,7 +15,7 @@ const WHATSAPP_NUMBER = "919XXXXXXXXX"; // ← Replace with Ruchi's number
 
 // ── Step 1: Paste your Google Sheet published CSV URL here ────────────────
 // Format: https://docs.google.com/spreadsheets/d/YOUR_ID/pub?output=csv
-const SHEET_CSV_URL = "YOUR_GOOGLE_SHEET_CSV_URL_HERE";
+const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTp1PbvmipSIvG7G38f4oO9StCimMn8HUaOUVVhmAA-LT9LotaCvSmN_yPoEx6pNf0N8dc3tMfiHGu9/pub?gid=1296113576&single=true&output=csv";
 
 // ── Fallback products (shown while Sheet loads or if Sheet is not set up) ─
 const FALLBACK_PRODUCTS = [
@@ -56,7 +56,7 @@ let _productsLoaded = false;
 // ═══════════════════════════════════════════════════════════════════════════
 
 async function loadProductsFromSheet() {
-  if (!SHEET_CSV_URL || SHEET_CSV_URL === "YOUR_GOOGLE_SHEET_CSV_URL_HERE") {
+  if (!SHEET_CSV_URL || SHEET_CSV_URL === "https://docs.google.com/spreadsheets/d/e/2PACX-1vTp1PbvmipSIvG7G38f4oO9StCimMn8HUaOUVVhmAA-LT9LotaCvSmN_yPoEx6pNf0N8dc3tMfiHGu9/pub?gid=1296113576&single=true&output=csv") {
     console.warn("ROUNIK: Google Sheet not configured. Using fallback products.");
     PRODUCTS = FALLBACK_PRODUCTS;
     _productsLoaded = true;
