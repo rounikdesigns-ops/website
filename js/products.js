@@ -82,8 +82,8 @@ async function loadProductsFromSheet() {
 
   } catch (err) {
     console.error("ROUNIK: Could not load from Google Sheets:", err.message);
-    console.warn("ROUNIK: Falling back to sample products.");
-    PRODUCTS = FALLBACK_PRODUCTS;
+    console.error("ROUNIK: Full error:", err);
+    PRODUCTS = [];
     _productsLoaded = true;
     return PRODUCTS;
   }
