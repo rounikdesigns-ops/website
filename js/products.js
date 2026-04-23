@@ -15,7 +15,7 @@ const WHATSAPP_NUMBER = "919XXXXXXXXX"; // ← Replace with Ruchi's number
 
 // ── Step 1: Paste your Google Sheet published CSV URL here ────────────────
 // Format: https://docs.google.com/spreadsheets/d/YOUR_ID/pub?output=csv
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTp1PbvmipSIvG7G38f4oO9StCimMn8HUaOUVVhmAA-LT9LotaCvSmN_yPoEx6pNf0N8dc3tMfiHGu9/pub?gid=1296113576&single=true&output=csv";
+const SHEET_CSV_URL = "YOUR_GOOGLE_SHEET_CSV_URL_HERE";
 
 // ── Fallback products (shown while Sheet loads or if Sheet is not set up) ─
 const FALLBACK_PRODUCTS = [
@@ -94,50 +94,61 @@ function parseCSV(csv) {
   const lines = csv.split('\n').filter(l => l.trim());
   if (lines.length < 2) return [];
 
-  // Parse header row to get column positions (handles any column order)
   const headers = parseCSVRow(lines[0]).map(h => h.trim().toLowerCase().replace(/\s+/g,'_'));
+  console.log("ROUNIK: Sheet headers:", headers);
 
   const products = [];
   for (let i = 1; i < lines.length; i++) {
     const row = parseCSVRow(lines[i]);
-    if (!row.length || !row[0]) continue; // skip empty rows
+    if (!row.length) continue;
 
     const obj = {};
     headers.forEach((h, idx) => { obj[h] = (row[idx] || '').trim(); });
 
-    // Skip rows without a name
-    if (!obj.name) continue;
+    // ── Column name map — matches Google Form output exactly ──────────────
+    // Google Form creates: "product_name", "product_id", "image_1_url" etc.
+    const id          = obj['product_id']          || obj['id']          || ('P' + i);
+    const name        = obj['product_name']         || obj['name']        || '';
+    const category    = obj['category']             || '';
+    const material    = obj['material']             || '';
+    const price       = parseFloat(obj['price'])    || 0;
+    const salePrice   = obj['sale_price']           ? parseFloat(obj['sale_price']) || null : null;
+    const description = obj['description']          || '';
+    const care        = obj['care_instructions']    || obj['care']        || '';
+    const sizes       = obj['sizes']                || '';
+    const colors      = obj['colors']               || '';
+    const tags        = obj['tags']                 || '';
+    const image1      = obj['image_1_url']          || obj['image1']      || '';
+    const image2      = obj['image_2_url']          || obj['image2']      || '';
+    const badge       = obj['badge']                || null;
+    const inStockRaw  = obj['in_stock']             || 'true';
 
-    // Map sheet columns → product object
+    if (!name) continue; // skip empty rows
+
+    const images = [];
+    if (image1 && image1.startsWith('http')) images.push(image1);
+    if (image2 && image2.startsWith('http')) images.push(image2);
+
     const product = {
-      id:             obj.id || 'P' + (i + Date.now()),
-      name:           obj.name || '',
-      category:       obj.category || 'Other',
-      price:          parseFloat(obj.price) || 0,
-      discountedPrice:obj.sale_price && obj.sale_price !== '' ? parseFloat(obj.sale_price) : null,
-      description:    obj.description || '',
-      material:       obj.material || '',
-      care:           obj.care_instructions || obj.care || '',
-      sizes:          obj.sizes ? obj.sizes.split(',').map(s => s.trim()).filter(Boolean) : [],
-      colors:         obj.colors ? obj.colors.split(',').map(c => c.trim()).filter(Boolean) : [],
-      images:         [],
-      badge:          obj.badge || null,
-      inStock:        obj.in_stock ? obj.in_stock.toLowerCase() !== 'false' && obj.in_stock !== '0' && obj.in_stock.toLowerCase() !== 'no' : true,
-      tags:           obj.tags ? obj.tags.split(',').map(t => t.trim().toLowerCase()).filter(Boolean) : [],
+      id:             id,
+      name:           name,
+      category:       category,
+      price:          price,
+      discountedPrice:salePrice,
+      description:    description,
+      material:       material,
+      care:           care,
+      sizes:          sizes  ? sizes.split(',').map(s=>s.trim()).filter(Boolean)  : [],
+      colors:         colors ? colors.split(',').map(c=>c.trim()).filter(Boolean) : [],
+      tags:           tags   ? tags.split(',').map(t=>t.trim().toLowerCase()).filter(Boolean) : [],
+      images:         images.length ? images : ['https://via.placeholder.com/400x500?text=' + encodeURIComponent(name)],
+      badge:          badge || null,
+      inStock:        inStockRaw.toLowerCase() !== 'false' && inStockRaw !== '0' && inStockRaw.toLowerCase() !== 'no',
     };
-
-    // Handle image columns: image1, image2, image3 (or image_1 etc.)
-    ['image1','image2','image3','image_1','image_2','image_3','image'].forEach(key => {
-      if (obj[key] && obj[key].startsWith('http')) product.images.push(obj[key]);
-    });
-
-    // If no images, use placeholder
-    if (product.images.length === 0) {
-      product.images = ['https://via.placeholder.com/400x500?text=' + encodeURIComponent(product.name)];
-    }
 
     products.push(product);
   }
+  console.log("ROUNIK: Loaded", products.length, "products. Categories:", [...new Set(products.map(p=>p.category))]);
   return products;
 }
 
