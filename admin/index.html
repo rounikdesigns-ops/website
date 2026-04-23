@@ -255,9 +255,53 @@
     let SURL=localStorage.getItem(AK)||'', prods=[];
     function initAdmin(){if(SURL){document.getElementById('sbanner').classList.add('hidden');document.getElementById('asurl').value=SURL;loadSheet();}else{loadLocal();}setupDrop();}
     function connectSheet(){const u=document.getElementById('asurl').value.trim();if(!u.startsWith('https://script.google.com')){toast('⚠️ Paste a valid Apps Script URL',true);return;}SURL=u;localStorage.setItem(AK,u);document.getElementById('sbanner').classList.add('hidden');toast('✅ Connected! Loading from Google Sheets...');loadSheet();}
-    async function loadSheet(){if(!SURL){loadLocal();return;}showSv('Loading from Google Sheets...');try{const r=await fetch(SURL+'?action=getAll&t='+Date.now());const d=await r.json();if(d.success&&Array.isArray(d.products)){prods=d.products;renderTbl();renderStats();toast(`✅ ${prods.length} products loaded`,'','ok');}else throw new Error(d.error||'Error');}catch(e){toast('⚠️ Sheet unreachable. Using local data.',true);loadLocal();}finally{hideSv();}}
+    async function loadSheet(){
+        if(!SURL){loadLocal();return;}
+        showSv('Loading from Google Sheets...');
+        try{
+            const url=SURL+'?action=getAll&t='+Date.now();
+            const r=await fetch(url,{method:'GET',redirect:'follow'});
+            const text=await r.text();
+            const d=JSON.parse(text);
+            if(d.success&&Array.isArray(d.products)){
+                prods=d.products;
+                // Also cache locally so refresh works even if Sheet is slow
+                localStorage.setItem('rounik_products',JSON.stringify(prods));
+                renderTbl();renderStats();
+                toast('✅ '+prods.length+' products loaded from Sheet','','ok');
+            } else {throw new Error(d.error||'No data');}
+        }catch(e){
+            console.error('Sheet load error:',e.message);
+            // Try loading from local cache first
+            const cached=localStorage.getItem('rounik_products');
+            if(cached){prods=JSON.parse(cached);renderTbl();renderStats();toast('⚠️ Using cached data. Sheet may be loading.',true);}
+            else{loadLocal();}
+        }finally{hideSv();}
+    }
     function loadLocal(){try{const s=localStorage.getItem('rounik_products');prods=s?JSON.parse(s):[];}catch{prods=[];}renderTbl();renderStats();}
-    async function saveToSheet(prod,action){if(!SURL){saveLocal(prod,action);return true;}showSv(action==='delete'?'Deleting...':'Saving to Google Sheets...');try{const r=await fetch(SURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,product:prod})});const d=await r.json();if(!d.success)throw new Error(d.error);return true;}catch(e){saveLocal(prod,action);toast('⚠️ Sheet save failed. Saved locally.',true);return false;}finally{hideSv();}}
+    async function saveToSheet(prod,action){
+        if(!SURL){saveLocal(prod,action);return true;}
+        showSv(action==='delete'?'Deleting from Sheet...':'Saving to Google Sheets...');
+        try{
+            const r=await fetch(SURL,{
+                method:'POST',
+                redirect:'follow',
+                body:JSON.stringify({action,product:prod})
+            });
+            const text=await r.text();
+            const d=JSON.parse(text);
+            if(!d.success)throw new Error(d.error||'Save failed');
+            // Update local cache too
+            saveLocal(prod,action);
+            return true;
+        }catch(e){
+            console.error('Sheet save error:',e.message);
+            // Save locally as fallback — will sync when Sheet is available
+            saveLocal(prod,action);
+            toast('⚠️ Sheet save failed — saved locally. Try re-deploying Apps Script.',true);
+            return false;
+        }finally{hideSv();}
+    }
     function saveLocal(prod,action){let p=JSON.parse(localStorage.getItem('rounik_products')||'[]');if(action==='delete')p=p.filter(x=>x.id!==prod.id);else{const i=p.findIndex(x=>x.id===prod.id);if(i!==-1)p[i]=prod;else p.unshift(prod);}localStorage.setItem('rounik_products',JSON.stringify(p));}
     async function refreshSheet(){await loadSheet();}
 
