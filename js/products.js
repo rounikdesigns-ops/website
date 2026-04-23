@@ -15,7 +15,7 @@ const WHATSAPP_NUMBER = "919XXXXXXXXX"; // ← Replace with Ruchi's number
 
 // ── Step 1: Paste your Google Sheet published CSV URL here ────────────────
 // Format: https://docs.google.com/spreadsheets/d/YOUR_ID/pub?output=csv
-const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTp1PbvmipSIvG7G38f4oO9StCimMn8HUaOUVVhmAA-LT9LotaCvSmN_yPoEx6pNf0N8dc3tMfiHGu9/pub?gid=1296113576&single=true&output=csv";
+const SHEET_CSV_URL = "YOUR_GOOGLE_SHEET_CSV_URL_HERE";
 
 // ── Fallback products (shown while Sheet loads or if Sheet is not set up) ─
 const FALLBACK_PRODUCTS = [
@@ -56,37 +56,45 @@ let _productsLoaded = false;
 // ═══════════════════════════════════════════════════════════════════════════
 
 async function loadProductsFromSheet() {
-  // If Sheet URL not configured, use fallback immediately
-  if (!SHEET_CSV_URL || SHEET_CSV_URL === "https://docs.google.com/spreadsheets/d/e/2PACX-1vTp1PbvmipSIvG7G38f4oO9StCimMn8HUaOUVVhmAA-LT9LotaCvSmN_yPoEx6pNf0N8dc3tMfiHGu9/pub?gid=1296113576&single=true&output=csv") {
+  if (!SHEET_CSV_URL || SHEET_CSV_URL === "YOUR_GOOGLE_SHEET_CSV_URL_HERE") {
     console.warn("ROUNIK: Google Sheet not configured. Using fallback products.");
     PRODUCTS = FALLBACK_PRODUCTS;
     _productsLoaded = true;
     return PRODUCTS;
   }
 
-  try {
-    // Add cache-busting so browser always gets fresh data
-    const url = SHEET_CSV_URL + "&t=" + Date.now();
-    const response = await fetch(url);
-    if (!response.ok) throw new Error("Sheet fetch failed: " + response.status);
+  // Try multiple methods to fetch the CSV
+  const methods = [
+    // Method 1: Direct fetch (works sometimes)
+    () => fetch(SHEET_CSV_URL),
+    // Method 2: allorigins CORS proxy
+    () => fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(SHEET_CSV_URL)}`),
+    // Method 3: corsproxy.io
+    () => fetch(`https://corsproxy.io/?${encodeURIComponent(SHEET_CSV_URL)}`),
+  ];
 
-    const csv = await response.text();
-    const parsed = parseCSV(csv);
-
-    if (parsed.length === 0) throw new Error("Empty sheet");
-
-    PRODUCTS = parsed;
-    _productsLoaded = true;
-    console.log(`ROUNIK: Loaded ${PRODUCTS.length} products from Google Sheets ✅`);
-    return PRODUCTS;
-
-  } catch (err) {
-    console.error("ROUNIK: Could not load from Google Sheets:", err.message);
-    console.error("ROUNIK: Full error:", err);
-    PRODUCTS = [];
-    _productsLoaded = true;
-    return PRODUCTS;
+  for (let i = 0; i < methods.length; i++) {
+    try {
+      console.log(`ROUNIK: Trying fetch method ${i + 1}...`);
+      const response = await methods[i]();
+      if (!response.ok) throw new Error("HTTP " + response.status);
+      const csv = await response.text();
+      const parsed = parseCSV(csv);
+      if (parsed.length === 0) throw new Error("Empty or unparseable CSV");
+      PRODUCTS = parsed;
+      _productsLoaded = true;
+      console.log(`ROUNIK: ✅ Loaded ${PRODUCTS.length} products via method ${i + 1}`);
+      return PRODUCTS;
+    } catch (err) {
+      console.warn(`ROUNIK: Method ${i + 1} failed:`, err.message);
+    }
   }
+
+  // All methods failed — use fallback
+  console.error("ROUNIK: All fetch methods failed. Using fallback products.");
+  PRODUCTS = FALLBACK_PRODUCTS;
+  _productsLoaded = true;
+  return PRODUCTS;
 }
 
 // ── CSV Parser — converts Google Sheet rows into product objects ──────────
