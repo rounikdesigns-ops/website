@@ -273,6 +273,7 @@
         image2:      "entry.807508916",
         badge:       "entry.318319323",
         inStock:     "entry.1958082277",
+        isHidden:    "entry.1901382156",  // ← soft delete field
     };
 
     // Google Sheet CSV URL for reading products
@@ -395,23 +396,34 @@
 
     // ── SAVE TO GOOGLE FORM (works without CORS issues) ───────────────────────
     async function saveToSheet(prod, action){
-        // For delete/update — only works via localStorage since Form only adds rows
-        // For delete: mark as deleted in local cache
+
         if(action === 'delete'){
-            saveLocal(prod, action);
-            toast('🗑 Deleted locally. Remove row manually from Google Sheet too.', false);
+            // SOFT DELETE — submit to form with is_hidden=true
+            // This adds a new row marking the product as hidden
+            // products.js filters out hidden products automatically
+            showSv('Hiding product from website...');
+            const hiddenProd = {...prod, isHidden: true};
+            await submitToForm(hiddenProd);
+            saveLocal(prod, 'delete'); // remove from local cache
+            hideSv();
+            toast('✅ Product hidden from website & marked in Sheet!', false, 'ok');
             return true;
         }
+
         if(action === 'update'){
-            saveLocal(prod, action);
-            // Also submit to form to log the update
+            showSv('Updating product...');
+            prod.isHidden = false;
             await submitToForm(prod);
-            toast('✅ Updated! Note: Edit the row in Google Sheet too for changes.', false, 'ok');
+            saveLocal(prod, 'update');
+            hideSv();
+            toast('✅ Product updated in Google Sheet!', false, 'ok');
             return true;
         }
+
         // New product — submit to Google Form
-        showSv('Saving to Google Sheet via Form...');
+        showSv('Saving to Google Sheet...');
         try{
+            prod.isHidden = false;
             const ok = await submitToForm(prod);
             if(ok){
                 saveLocal(prod, 'save');
@@ -431,7 +443,6 @@
     function submitToForm(prod){
         return new Promise((resolve) => {
             const images = prod.images || [];
-            // Build form data
             const data = new URLSearchParams();
             data.append(FORM_FIELDS.id,          prod.id || '');
             data.append(FORM_FIELDS.name,        prod.name || '');
@@ -448,15 +459,15 @@
             data.append(FORM_FIELDS.image2,      images[1] || '');
             data.append(FORM_FIELDS.badge,       prod.badge || '');
             data.append(FORM_FIELDS.inStock,     prod.inStock === false ? 'false' : 'true');
+            data.append(FORM_FIELDS.isHidden,    prod.isHidden === true ? 'true' : 'false');
 
-            // Use no-cors fetch — Form accepts this
             fetch(FORM_URL, {
                 method: 'POST',
-                mode: 'no-cors',  // Key: bypasses CORS restriction
+                mode: 'no-cors',
                 headers: {'Content-Type': 'application/x-www-form-urlencoded'},
                 body: data.toString()
             })
-                .then(() => resolve(true))  // no-cors always resolves (no response body)
+                .then(() => resolve(true))
                 .catch(() => resolve(false));
         });
     }

@@ -56,7 +56,7 @@ let _productsLoaded = false;
 // ═══════════════════════════════════════════════════════════════════════════
 
 async function loadProductsFromSheet() {
- if (!SHEET_CSV_URL || SHEET_CSV_URL === "YOUR_GOOGLE_SHEET_CSV_URL_HERE") {
+  if (!SHEET_CSV_URL || SHEET_CSV_URL === "YOUR_GOOGLE_SHEET_CSV_URL_HERE") {
     console.warn("ROUNIK: Google Sheet not configured. Using fallback products.");
     PRODUCTS = FALLBACK_PRODUCTS;
     _productsLoaded = true;
