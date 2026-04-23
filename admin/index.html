@@ -2,913 +2,313 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>ROUNIK Admin — Product Manager</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <title>ROUNIK Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         *{box-sizing:border-box;margin:0;padding:0;}
         body{font-family:'Jost',sans-serif;background:#f0f2f0;color:#2d2d2d;}
-        @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Jost:wght@300;400;500;600&display=swap');
-
-        /* Admin Layout */
-        .admin-wrap{display:grid;grid-template-rows:auto 1fr;min-height:100vh;}
-        .admin-nav{
-            background:var(--sage-dark,#4A6B4A);color:#fff;
-            padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between;
-            position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.2);
-        }
-        .admin-logo{font-size:1.2rem;font-weight:700;letter-spacing:2px;color:#fff;}
-        .admin-logo span{color:#C9A84C;font-size:0.7rem;font-weight:400;letter-spacing:1px;display:block;margin-top:-2px;}
-        .admin-nav-right{display:flex;align-items:center;gap:1rem;}
-        .nav-pill{padding:6px 14px;border-radius:50px;font-size:0.78rem;font-weight:500;cursor:pointer;transition:all 0.2s;}
-        .nav-pill.outline{border:1.5px solid rgba(255,255,255,0.4);color:#fff;background:transparent;}
-        .nav-pill.outline:hover{background:rgba(255,255,255,0.1);}
-        .nav-pill.gold{background:#C9A84C;color:#fff;border:none;}
-        .admin-body{max-width:1280px;margin:0 auto;padding:1.5rem 2rem 3rem;width:100%;}
-
-        /* Stats */
+        .admin-nav{background:#4A6B4A;color:#fff;padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,0,0,0.2);}
+        .admin-logo{font-size:1.2rem;font-weight:700;letter-spacing:2px;}
+        .admin-logo span{color:#C9A84C;font-size:0.7rem;font-weight:400;display:block;margin-top:-2px;}
+        .nav-right{display:flex;align-items:center;gap:0.8rem;}
+        .np{padding:6px 14px;border-radius:50px;font-size:0.78rem;font-weight:500;cursor:pointer;transition:all 0.2s;font-family:'Jost',sans-serif;border:1.5px solid rgba(255,255,255,0.4);color:#fff;background:transparent;}
+        .np:hover{background:rgba(255,255,255,0.1);}
+        .np.gold{background:#C9A84C;color:#fff;border:none;}
+        .np.red{border-color:rgba(231,76,60,0.5);color:#ff8a80;}
+        .setup-banner{background:#fff8e1;border-bottom:2px solid #ffe082;padding:1rem 2rem;display:flex;align-items:flex-start;gap:1rem;flex-wrap:wrap;}
+        .setup-banner.hidden{display:none;}
+        .setup-text strong{display:block;color:#856404;font-size:0.9rem;margin-bottom:2px;}
+        .setup-text span{font-size:0.8rem;color:#999;}
+        .url-row{display:flex;gap:0.5rem;margin-top:0.6rem;flex-wrap:wrap;}
+        .url-input{flex:1;min-width:280px;padding:8px 12px;border:1.5px solid #ffe082;border-radius:8px;font-family:'Jost',sans-serif;font-size:0.85rem;outline:none;}
+        .url-input:focus{border-color:#C9A84C;}
+        .btn-connect{padding:8px 18px;background:#4A6B4A;color:#fff;border:none;border-radius:8px;font-family:'Jost',sans-serif;font-size:0.85rem;font-weight:600;cursor:pointer;}
+        .admin-body{max-width:1280px;margin:0 auto;padding:1.5rem 2rem 3rem;}
         .stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:1rem;margin-bottom:2rem;}
-        .stat-card{background:#fff;border-radius:12px;padding:1rem 1.2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);border-top:3px solid var(--sage,#6B8C6B);}
-        .stat-card.gold{border-top-color:#C9A84C;}
-        .stat-card.red{border-top-color:#e74c3c;}
-        .stat-card.blue{border-top-color:#3498db;}
-        .stat-num{font-size:1.9rem;font-weight:700;color:#4A6B4A;line-height:1;}
-        .stat-label{font-size:0.72rem;color:#7a7a7a;letter-spacing:1px;text-transform:uppercase;margin-top:3px;}
-
-        /* Main grid */
+        .sc{background:#fff;border-radius:12px;padding:1rem 1.2rem;box-shadow:0 2px 12px rgba(0,0,0,0.06);border-top:3px solid #6B8C6B;}
+        .sc.g{border-top-color:#C9A84C;} .sc.r{border-top-color:#e74c3c;} .sc.b{border-top-color:#3498db;}
+        .sn{font-size:1.9rem;font-weight:700;color:#4A6B4A;line-height:1;}
+        .sl{font-size:0.72rem;color:#7a7a7a;letter-spacing:1px;text-transform:uppercase;margin-top:3px;}
         .main-grid{display:grid;grid-template-columns:400px 1fr;gap:2rem;align-items:start;}
-
-        /* Form card */
         .form-card{background:#fff;border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,0.08);overflow:hidden;position:sticky;top:80px;}
-        .form-card-header{background:#4A6B4A;color:#fff;padding:1.2rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
-        .form-card-header h2{font-size:1rem;font-weight:600;letter-spacing:0.5px;}
-        .form-card-body{padding:1.5rem;max-height:calc(100vh - 180px);overflow-y:auto;}
+        .fch{background:#4A6B4A;color:#fff;padding:1.2rem 1.5rem;display:flex;align-items:center;justify-content:space-between;}
+        .fch h2{font-size:1rem;font-weight:600;}
+        .fcb{padding:1.5rem;max-height:calc(100vh - 200px);overflow-y:auto;}
         .f{margin-bottom:1rem;}
         .f label{display:block;font-size:0.72rem;font-weight:700;letter-spacing:0.8px;text-transform:uppercase;color:#7a7a7a;margin-bottom:5px;}
-        .f label .req{color:#e74c3c;}
-        .f input,.f select,.f textarea{
-            width:100%;padding:9px 12px;border:1.5px solid #e0e0e0;border-radius:8px;
-            font-family:'Jost',sans-serif;font-size:0.85rem;color:#2d2d2d;
-            background:#fafafa;outline:none;transition:all 0.2s;
-        }
+        .req{color:#e74c3c;}
+        .f input,.f select,.f textarea{width:100%;padding:9px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-family:'Jost',sans-serif;font-size:0.85rem;color:#2d2d2d;background:#fafafa;outline:none;transition:all 0.2s;}
         .f input:focus,.f select:focus,.f textarea:focus{border-color:#6B8C6B;background:#fff;box-shadow:0 0 0 3px rgba(107,140,107,0.1);}
-        .f textarea{min-height:80px;resize:vertical;line-height:1.5;}
-        .f-row{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;}
-        .f-hint{font-size:0.72rem;color:#aaa;margin-top:3px;}
-
-        /* Image Upload Area */
-        .img-upload-area{
-            border:2px dashed #d6e4d6;border-radius:10px;
-            padding:1.2rem;text-align:center;cursor:pointer;
-            transition:all 0.2s;background:#fafafa;margin-bottom:0.5rem;
-            position:relative;
-        }
-        .img-upload-area:hover,.img-upload-area.dragover{border-color:#6B8C6B;background:#EDF2ED;}
-        .img-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
-        .img-upload-icon{font-size:2rem;margin-bottom:0.4rem;}
-        .img-upload-text{font-size:0.8rem;color:#7a7a7a;line-height:1.4;}
-        .img-upload-text strong{color:#4A6B4A;display:block;margin-bottom:2px;}
-
-        /* Image previews */
+        .f textarea{min-height:75px;resize:vertical;}
+        .fr{display:grid;grid-template-columns:1fr 1fr;gap:0.8rem;}
+        .hint{font-size:0.72rem;color:#aaa;margin-top:3px;}
+        .szc{display:flex;flex-wrap:wrap;gap:0.4rem;}
+        .sch{display:none;} .sch+label{padding:5px 12px;border:1.5px solid #e0e0e0;border-radius:6px;font-size:0.8rem;cursor:pointer;transition:all 0.2s;user-select:none;}
+        .sch:checked+label{background:#4A6B4A;color:#fff;border-color:#4A6B4A;}
+        .img-zone{border:2px dashed #d6e4d6;border-radius:10px;padding:1.2rem;text-align:center;cursor:pointer;transition:all 0.2s;background:#fafafa;margin-bottom:0.5rem;position:relative;}
+        .img-zone:hover,.img-zone.dg{border-color:#6B8C6B;background:#EDF2ED;}
+        .img-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
         .img-previews{display:flex;flex-wrap:wrap;gap:0.5rem;margin-top:0.6rem;}
-        .img-prev-item{position:relative;width:70px;height:85px;border-radius:8px;overflow:hidden;border:2px solid #e0e0e0;}
-        .img-prev-item img{width:100%;height:100%;object-fit:cover;}
-        .img-prev-item .remove-img{
-            position:absolute;top:2px;right:2px;width:18px;height:18px;
-            background:#e74c3c;color:#fff;border:none;border-radius:50%;
-            font-size:0.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center;
-            line-height:1;
-        }
-        .img-prev-item.primary-img{border-color:#C9A84C;}
-        .primary-badge{position:absolute;bottom:0;left:0;right:0;background:rgba(201,168,76,0.9);color:#fff;font-size:0.6rem;text-align:center;padding:2px;font-weight:600;}
-
-        /* URL input for external images */
-        .url-input-row{display:flex;gap:0.5rem;align-items:center;}
-        .url-input-row input{flex:1;}
-        .btn-add-url{padding:9px 12px;background:#4A6B4A;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:0.8rem;font-weight:600;transition:all 0.2s;white-space:nowrap;}
-        .btn-add-url:hover{background:#3a5a3a;}
-
-        /* Size checkboxes */
-        .size-checks{display:flex;flex-wrap:wrap;gap:0.4rem;}
-        .size-check{display:none;}
-        .size-check + label{
-            padding:5px 12px;border:1.5px solid #e0e0e0;border-radius:6px;
-            font-size:0.8rem;cursor:pointer;transition:all 0.2s;user-select:none;
-        }
-        .size-check:checked + label{background:#4A6B4A;color:#fff;border-color:#4A6B4A;}
-
-        /* Form actions */
-        .form-actions{display:flex;gap:0.7rem;margin-top:1.2rem;padding-top:1rem;border-top:1px solid #f0f0f0;}
-        .btn-save-prod{flex:1;background:#4A6B4A;color:#fff;border:none;padding:11px;border-radius:8px;font-family:'Jost',sans-serif;font-size:0.88rem;font-weight:600;cursor:pointer;transition:all 0.2s;}
-        .btn-save-prod:hover{background:#3a5a3a;}
-        .btn-reset{background:#f5f5f5;color:#7a7a7a;border:1.5px solid #e0e0e0;padding:11px 14px;border-radius:8px;font-family:'Jost',sans-serif;font-size:0.85rem;cursor:pointer;transition:all 0.2s;}
-        .btn-reset:hover{border-color:#aaa;}
-
-        /* Products table */
+        .ipi{position:relative;width:70px;height:85px;border-radius:8px;overflow:hidden;border:2px solid #e0e0e0;}
+        .ipi img{width:100%;height:100%;object-fit:cover;}
+        .ipi.pm{border-color:#C9A84C;}
+        .pb{position:absolute;bottom:0;left:0;right:0;background:rgba(201,168,76,0.9);color:#fff;font-size:0.6rem;text-align:center;padding:2px;font-weight:600;}
+        .ri{position:absolute;top:2px;right:2px;width:18px;height:18px;background:#e74c3c;color:#fff;border:none;border-radius:50%;font-size:0.65rem;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+        .url-r{display:flex;gap:0.5rem;} .url-r input{flex:1;}
+        .bau{padding:9px 12px;background:#4A6B4A;color:#fff;border:none;border-radius:8px;font-size:0.8rem;font-weight:600;cursor:pointer;white-space:nowrap;}
+        .fa{display:flex;gap:0.7rem;margin-top:1.2rem;padding-top:1rem;border-top:1px solid #f0f0f0;}
+        .bs{flex:1;background:#4A6B4A;color:#fff;border:none;padding:11px;border-radius:8px;font-family:'Jost',sans-serif;font-size:0.88rem;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:8px;}
+        .bs:hover{background:#3a5a3a;} .bs:disabled{background:#aaa;cursor:not-allowed;}
+        .br{background:#f5f5f5;color:#7a7a7a;border:1.5px solid #e0e0e0;padding:11px 14px;border-radius:8px;font-family:'Jost',sans-serif;font-size:0.85rem;cursor:pointer;}
         .table-card{background:#fff;border-radius:14px;box-shadow:0 2px 16px rgba(0,0,0,0.08);overflow:hidden;}
-        .table-topbar{padding:1.2rem 1.5rem;display:flex;align-items:center;gap:1rem;border-bottom:1px solid #f0f0f0;flex-wrap:wrap;}
-        .table-topbar h2{font-size:1rem;font-weight:700;color:#4A6B4A;margin-right:auto;}
-        .search-input{padding:8px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-family:'Jost',sans-serif;font-size:0.82rem;outline:none;width:200px;transition:all 0.2s;}
-        .search-input:focus{border-color:#6B8C6B;}
-        .filter-select{padding:8px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-family:'Jost',sans-serif;font-size:0.82rem;outline:none;background:#fff;cursor:pointer;}
-        .table-scroll{overflow-x:auto;}
+        .ttb{padding:1.2rem 1.5rem;display:flex;align-items:center;gap:1rem;border-bottom:1px solid #f0f0f0;flex-wrap:wrap;}
+        .ttb h2{font-size:1rem;font-weight:700;color:#4A6B4A;margin-right:auto;}
+        .si{padding:8px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-family:'Jost',sans-serif;font-size:0.82rem;outline:none;width:180px;}
+        .si:focus{border-color:#6B8C6B;}
+        .fs{padding:8px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-family:'Jost',sans-serif;font-size:0.82rem;background:#fff;cursor:pointer;outline:none;}
+        .brr{padding:8px 14px;background:#EDF2ED;color:#4A6B4A;border:none;border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;transition:all 0.2s;}
+        .brr:hover{background:#4A6B4A;color:#fff;}
+        .tsc{overflow-x:auto;}
         table{width:100%;border-collapse:collapse;}
         thead tr{background:#EDF2ED;}
         th{padding:10px 14px;font-size:0.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#4A6B4A;text-align:left;white-space:nowrap;}
-        td{padding:10px 14px;font-size:0.84rem;color:#2d2d2d;border-bottom:1px solid #f5f5f5;vertical-align:middle;}
+        td{padding:10px 14px;font-size:0.84rem;border-bottom:1px solid #f5f5f5;vertical-align:middle;}
         tr:hover td{background:#fafcfa;}
-        .td-img{width:50px;height:62px;object-fit:cover;border-radius:6px;border:1px solid #e0e0e0;}
-        .td-name{font-weight:600;color:#2d2d2d;max-width:160px;}
-        .td-cat{font-size:0.72px;color:#C9A84C;letter-spacing:1px;text-transform:uppercase;font-size:0.72rem;white-space:nowrap;}
-        .td-material{font-size:0.8rem;color:#7a7a7a;}
-        .td-price{font-weight:700;color:#4A6B4A;white-space:nowrap;}
-        .td-old-price{font-size:0.75rem;color:#aaa;text-decoration:line-through;}
-        .badge-pill{font-size:0.68rem;padding:3px 9px;border-radius:50px;font-weight:600;white-space:nowrap;}
-        .badge-pill.in{background:#d4edda;color:#155724;}
-        .badge-pill.out{background:#f8d7da;color:#721c24;}
-        .badge-pill.new-b{background:#EDF2ED;color:#4A6B4A;}
-        .badge-pill.sale-b{background:#FDF8EE;color:#C9A84C;}
-        .badge-pill.best-b{background:#e8e0f5;color:#6c3483;}
-        .td-actions{display:flex;gap:6px;white-space:nowrap;}
-        .btn-edit-row,.btn-del-row,.btn-toggle-row{padding:5px 10px;border-radius:6px;border:none;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s;}
-        .btn-edit-row{background:#EDF2ED;color:#4A6B4A;}.btn-edit-row:hover{background:#4A6B4A;color:#fff;}
-        .btn-del-row{background:#fde8e8;color:#c0392b;}.btn-del-row:hover{background:#c0392b;color:#fff;}
-        .btn-toggle-row{background:#fff3cd;color:#856404;}.btn-toggle-row:hover{background:#ffc107;color:#fff;}
-        .no-data{text-align:center;padding:3rem;color:#aaa;font-size:0.9rem;}
-
-        /* Toast */
-        .toast{position:fixed;bottom:2rem;right:2rem;background:#4A6B4A;color:#fff;padding:12px 20px;border-radius:10px;font-size:0.85rem;font-weight:500;transform:translateY(80px);opacity:0;transition:all 0.3s;z-index:9999;max-width:300px;}
+        .ti{width:48px;height:60px;object-fit:cover;border-radius:6px;border:1px solid #e0e0e0;}
+        .tn{font-weight:600;max-width:140px;}
+        .tc{font-size:0.7rem;color:#C9A84C;letter-spacing:1px;text-transform:uppercase;}
+        .tp{font-weight:700;color:#4A6B4A;white-space:nowrap;}
+        .to{font-size:0.75rem;color:#aaa;text-decoration:line-through;}
+        .pi{font-size:0.68rem;padding:3px 9px;border-radius:50px;font-weight:600;white-space:nowrap;}
+        .pi.in{background:#d4edda;color:#155724;} .pi.out{background:#f8d7da;color:#721c24;}
+        .pi.nb{background:#EDF2ED;color:#4A6B4A;} .pi.sb{background:#FDF8EE;color:#C9A84C;} .pi.bb{background:#e8e0f5;color:#6c3483;}
+        .tda{display:flex;gap:5px;white-space:nowrap;}
+        .be,.bd,.bt{padding:5px 10px;border-radius:6px;border:none;font-size:0.75rem;font-weight:600;cursor:pointer;transition:all 0.2s;}
+        .be{background:#EDF2ED;color:#4A6B4A;} .be:hover{background:#4A6B4A;color:#fff;}
+        .bd{background:#fde8e8;color:#c0392b;} .bd:hover{background:#c0392b;color:#fff;}
+        .bt{background:#fff3cd;color:#856404;} .bt:hover{background:#ffc107;color:#fff;}
+        .nd{text-align:center;padding:3rem;color:#aaa;font-size:0.9rem;}
+        .svo{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:5000;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;gap:1rem;visibility:hidden;opacity:0;transition:all 0.3s;}
+        .svo.show{visibility:visible;opacity:1;}
+        .sp{width:50px;height:50px;border:4px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.8s linear infinite;}
+        @keyframes spin{to{transform:rotate(360deg);}}
+        .sm{font-size:1rem;font-weight:600;}
+        .toast{position:fixed;bottom:2rem;right:2rem;background:#4A6B4A;color:#fff;padding:12px 20px;border-radius:10px;font-size:0.85rem;font-weight:500;transform:translateY(80px);opacity:0;transition:all 0.3s;z-index:9999;}
         .toast.show{transform:translateY(0);opacity:1;}
-        .toast.error{background:#c0392b;}
-
-        /* Confirm modal */
-        .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:8000;display:flex;align-items:center;justify-content:center;visibility:hidden;opacity:0;transition:all 0.2s;}
-        .confirm-overlay.show{visibility:visible;opacity:1;}
-        .confirm-box{background:#fff;border-radius:14px;padding:2rem;max-width:380px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.2);}
-        .confirm-box h3{font-size:1.1rem;font-weight:700;color:#2d2d2d;margin-bottom:0.5rem;}
-        .confirm-box p{font-size:0.85rem;color:#7a7a7a;margin-bottom:1.5rem;line-height:1.5;}
-        .confirm-actions{display:flex;gap:0.8rem;}
-        .btn-confirm-yes{flex:1;background:#c0392b;color:#fff;border:none;padding:10px;border-radius:8px;font-family:'Jost',sans-serif;font-weight:600;font-size:0.85rem;cursor:pointer;}
-        .btn-confirm-no{flex:1;background:#f5f5f5;color:#7a7a7a;border:1.5px solid #e0e0e0;padding:10px;border-radius:8px;font-family:'Jost',sans-serif;font-weight:600;font-size:0.85rem;cursor:pointer;}
-
-        @media(max-width:1000px){.main-grid{grid-template-columns:1fr;}.form-card{position:static;max-height:none;}.form-card-body{max-height:none;}.stats-row{grid-template-columns:repeat(3,1fr);}}
-        @media(max-width:600px){.stats-row{grid-template-columns:1fr 1fr;}.f-row{grid-template-columns:1fr;}.admin-body{padding:1rem;}}
-
-        /* ── LOGIN SCREEN ─────────────────────────────────────────────────────────── */
-        #login-screen{
-            position:fixed;inset:0;z-index:9999;
-            background:linear-gradient(135deg,#1a2e1a 0%,#2d3a2d 50%,#1a1a1a 100%);
-            display:flex;align-items:center;justify-content:center;
-            font-family:'Jost',sans-serif;
-        }
-        .login-card{
-            background:#fff;border-radius:20px;padding:2.8rem 2.5rem;
-            width:100%;max-width:400px;box-shadow:0 32px 80px rgba(0,0,0,0.4);
-            text-align:center;position:relative;overflow:hidden;
-        }
-        .login-card::before{
-            content:'';position:absolute;top:0;left:0;right:0;height:5px;
-            background:linear-gradient(90deg,#4A6B4A,#C9A84C,#4A6B4A);
-        }
-        .login-logo{font-size:2rem;font-weight:800;letter-spacing:4px;color:#1E1E1E;margin-bottom:2px;}
-        .login-logo-sub{font-size:0.72rem;letter-spacing:2px;color:#C9A84C;text-transform:uppercase;margin-bottom:1.8rem;}
-        .login-icon{font-size:3rem;margin-bottom:0.8rem;}
-        .login-title{font-size:1.1rem;font-weight:700;color:#1E1E1E;margin-bottom:0.3rem;}
-        .login-sub{font-size:0.82rem;color:#aaa;margin-bottom:0.8rem;line-height:1.5;}
-        .session-tag{display:inline-block;background:#EDF2ED;color:#4A6B4A;font-size:0.7rem;font-weight:700;padding:3px 10px;border-radius:50px;letter-spacing:0.5px;margin-bottom:1.5rem;}
-        .login-field{margin-bottom:1.2rem;text-align:left;}
-        .login-field label{display:block;font-size:0.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:6px;}
-        .login-field input{
-            width:100%;padding:12px 16px;border:2px solid #e0e0e0;border-radius:10px;
-            font-family:'Jost',sans-serif;font-size:0.9rem;color:#1E1E1E;
-            outline:none;transition:all 0.25s;background:#fafafa;
-        }
-        .login-field input:focus{border-color:#4A6B4A;background:#fff;box-shadow:0 0 0 4px rgba(74,107,74,0.1);}
-        .login-field input.error{border-color:#e74c3c;background:#fff5f5;}
-        .pw-wrap{position:relative;}
-        .show-pw-btn{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;color:#aaa;transition:color 0.2s;}
-        .show-pw-btn:hover{color:#4A6B4A;}
-        .login-btn{
-            width:100%;padding:14px;border:none;border-radius:10px;
-            background:linear-gradient(135deg,#4A6B4A,#6B8C6B);color:#fff;
-            font-family:'Jost',sans-serif;font-size:0.95rem;font-weight:700;
-            cursor:pointer;transition:all 0.25s;letter-spacing:0.5px;margin-top:0.5rem;
-            box-shadow:0 4px 16px rgba(74,107,74,0.35);
-        }
-        .login-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(74,107,74,0.45);}
-        .login-btn:disabled{background:#aaa;cursor:not-allowed;transform:none;box-shadow:none;}
-        .login-error{background:#fff0f0;border:1px solid #fcc;border-radius:8px;padding:10px 14px;font-size:0.82rem;color:#c0392b;margin-bottom:1rem;display:none;text-align:left;}
-        .login-error.show{display:block;}
-        .login-locked{background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:12px;font-size:0.82rem;color:#856404;margin-bottom:1rem;display:none;}
-        .login-locked.show{display:block;}
-        .login-footer{font-size:0.72rem;color:#ccc;margin-top:1.5rem;}
-        .shake{animation:shake 0.4s ease;}
-        @keyframes shake{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+        .toast.err{background:#c0392b;} .toast.ok{background:#27AE60;}
+        .co{position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:8000;display:flex;align-items:center;justify-content:center;visibility:hidden;opacity:0;transition:all 0.2s;}
+        .co.show{visibility:visible;opacity:1;}
+        .cb{background:#fff;border-radius:14px;padding:2rem;max-width:380px;width:90%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.2);}
+        .cb h3{font-size:1.1rem;font-weight:700;margin-bottom:0.5rem;}
+        .cb p{font-size:0.85rem;color:#7a7a7a;margin-bottom:1.5rem;line-height:1.5;}
+        .ca{display:flex;gap:0.8rem;}
+        .cy{flex:1;background:#c0392b;color:#fff;border:none;padding:10px;border-radius:8px;font-family:'Jost',sans-serif;font-weight:600;font-size:0.85rem;cursor:pointer;}
+        .cn{flex:1;background:#f5f5f5;color:#7a7a7a;border:1.5px solid #e0e0e0;padding:10px;border-radius:8px;font-family:'Jost',sans-serif;font-weight:600;font-size:0.85rem;cursor:pointer;}
+        /* Login */
+        #ls{position:fixed;inset:0;z-index:9999;background:linear-gradient(135deg,#1a2e1a,#2d3a2d,#1a1a1a);display:flex;align-items:center;justify-content:center;}
+        .lc{background:#fff;border-radius:20px;padding:2.8rem 2.5rem;width:100%;max-width:400px;box-shadow:0 32px 80px rgba(0,0,0,0.4);text-align:center;position:relative;overflow:hidden;}
+        .lc::before{content:'';position:absolute;top:0;left:0;right:0;height:5px;background:linear-gradient(90deg,#4A6B4A,#C9A84C,#4A6B4A);}
+        .ll{font-size:2rem;font-weight:800;letter-spacing:4px;color:#1E1E1E;}
+        .ls2{font-size:0.72rem;letter-spacing:2px;color:#C9A84C;text-transform:uppercase;margin-bottom:1.8rem;}
+        .lf{margin-bottom:1.2rem;text-align:left;}
+        .lf label{display:block;font-size:0.72rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#555;margin-bottom:6px;}
+        .lf input{width:100%;padding:12px 16px;border:2px solid #e0e0e0;border-radius:10px;font-family:'Jost',sans-serif;font-size:0.9rem;outline:none;transition:all 0.25s;background:#fafafa;}
+        .lf input:focus{border-color:#4A6B4A;box-shadow:0 0 0 4px rgba(74,107,74,0.1);}
+        .lf input.le{border-color:#e74c3c;}
+        .pw{position:relative;}
+        .pt{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1rem;color:#aaa;}
+        .lb{width:100%;padding:14px;border:none;border-radius:10px;background:linear-gradient(135deg,#4A6B4A,#6B8C6B);color:#fff;font-family:'Jost',sans-serif;font-size:0.95rem;font-weight:700;cursor:pointer;transition:all 0.25s;box-shadow:0 4px 16px rgba(74,107,74,0.35);}
+        .lb:hover{transform:translateY(-2px);} .lb:disabled{background:#aaa;cursor:not-allowed;transform:none;box-shadow:none;}
+        .ler{background:#fff0f0;border:1px solid #fcc;border-radius:8px;padding:10px 14px;font-size:0.82rem;color:#c0392b;margin-bottom:1rem;display:none;}
+        .ler.show{display:block;}
+        .llk{background:#fff8e1;border:1px solid #ffe082;border-radius:8px;padding:12px;font-size:0.82rem;color:#856404;margin-bottom:1rem;display:none;}
+        .llk.show{display:block;}
+        .lft{font-size:0.72rem;color:#ccc;margin-top:1.2rem;}
+        .shk{animation:shk 0.4s ease;}
+        @keyframes shk{0%,100%{transform:translateX(0);}20%{transform:translateX(-8px);}40%{transform:translateX(8px);}60%{transform:translateX(-5px);}80%{transform:translateX(5px);}}
+        @media(max-width:1000px){.main-grid{grid-template-columns:1fr;}.form-card{position:static;}.fcb{max-height:none;}.stats-row{grid-template-columns:repeat(3,1fr);}}
+        @media(max-width:600px){.stats-row{grid-template-columns:1fr 1fr;}.fr{grid-template-columns:1fr;}.admin-body{padding:1rem;}}
     </style>
 </head>
 <body>
 
-<!-- ── LOGIN SCREEN ─────────────────────────────────────────────────────────── -->
-<div id="login-screen">
-    <div class="login-card" id="login-card">
-        <div class="login-logo">ROUNIK</div>
-        <div class="login-logo-sub">Admin Panel</div>
-        <div class="login-icon">🔐</div>
-        <div class="login-title">Welcome Back</div>
-        <div class="login-sub">Sign in to manage your products</div>
-        <div class="session-tag">🔒 Secure Admin Access</div>
-
-        <div class="login-locked" id="login-locked">
-            🔒 Too many failed attempts. Please wait <span id="lockdown-timer">30</span> seconds before trying again.
-        </div>
-        <div class="login-error" id="login-error">
-            ❌ Incorrect username or password. Please try again.
-        </div>
-
-        <div class="login-field">
-            <label>Username</label>
-            <input type="text" id="login-username" placeholder="Enter username" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()">
-        </div>
-        <div class="login-field">
-            <label>Password</label>
-            <div class="pw-wrap">
-                <input type="password" id="login-password" placeholder="Enter password" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()">
-                <button class="show-pw-btn" onclick="togglePwVisibility()" title="Show/hide password">👁</button>
-            </div>
-        </div>
-
-        <button class="login-btn" id="login-btn" onclick="doLogin()">Sign In →</button>
-        <div class="login-footer">MarketMagix Studio · ROUNIK Admin v2.0</div>
+<!-- LOGIN -->
+<div id="ls">
+    <div class="lc" id="lcard">
+        <div class="ll">ROUNIK</div>
+        <div class="ls2">Admin Panel</div>
+        <div style="font-size:3rem;margin:0.5rem 0;">🔐</div>
+        <div style="font-size:1.1rem;font-weight:700;margin-bottom:0.3rem;">Welcome Back</div>
+        <div style="font-size:0.82rem;color:#aaa;margin-bottom:1.5rem;">Sign in to manage products</div>
+        <div class="llk" id="llk">🔒 Too many attempts. Wait <span id="lt">30</span>s.</div>
+        <div class="ler" id="ler"></div>
+        <div class="lf"><label>Username</label><input type="text" id="lu" autocomplete="username" onkeydown="if(event.key==='Enter')doLogin()"></div>
+        <div class="lf"><label>Password</label><div class="pw"><input type="password" id="lp" autocomplete="current-password" onkeydown="if(event.key==='Enter')doLogin()"><button class="pt" onclick="togglePw()">👁</button></div></div>
+        <button class="lb" id="lbtn" onclick="doLogin()">Sign In →</button>
+        <div class="lft">MarketMagix Studio · ROUNIK Admin v2.0</div>
     </div>
 </div>
 
-<div class="admin-wrap" id="admin-wrap" style="display:none;">
-
-    <!-- Nav -->
+<!-- ADMIN -->
+<div id="admin" style="display:none;">
+    <div class="setup-banner" id="sbanner">
+        <div style="font-size:1.5rem;">⚙️</div>
+        <div class="setup-text" style="flex:1;">
+            <strong>Google Sheets not connected — products only save on this device</strong>
+            <span>Paste your Apps Script URL to sync products across all devices. <a href="#" onclick="alert('See GOOGLE_SHEETS_SETUP.txt in your project folder for full instructions.')" style="color:#856404;">How?</a></span>
+            <div class="url-row">
+                <input type="text" class="url-input" id="asurl" placeholder="https://script.google.com/macros/s/.../exec">
+                <button class="btn-connect" onclick="connectSheet()">Connect</button>
+            </div>
+        </div>
+    </div>
     <nav class="admin-nav">
         <div class="admin-logo">ROUNIK <span>Admin — Product Manager</span></div>
-        <div class="admin-nav-right">
-            <button class="nav-pill outline" onclick="exportData()">⬇ Export JSON</button>
-            <button class="nav-pill outline" onclick="resetToDefaults()">↺ Reset</button>
-            <a href="../index.html" target="_blank" class="nav-pill gold">🌐 View Website</a>
-            <button class="nav-pill outline" onclick="logout()" style="border-color:rgba(231,76,60,0.5);color:#ff8a80;">🚪 Logout</button>
+        <div class="nav-right">
+            <button class="np" onclick="refreshSheet()">🔄 Sync</button>
+            <button class="np" onclick="exportData()">⬇ Export</button>
+            <a href="../index.html" target="_blank" class="np gold">🌐 View Site</a>
+            <button class="np red" onclick="logout()">🚪 Logout</button>
         </div>
     </nav>
-
     <div class="admin-body">
-
-        <!-- Stats -->
-        <div class="stats-row" id="stats-row"></div>
-
+        <div class="stats-row" id="sr"></div>
         <div class="main-grid">
-
-            <!-- ── FORM ── -->
             <div class="form-card">
-                <div class="form-card-header">
-                    <h2 id="form-heading">➕ Add New Product</h2>
-                    <span id="edit-badge" style="display:none;background:rgba(255,255,255,0.2);padding:3px 10px;border-radius:50px;font-size:0.72rem;">Editing</span>
-                </div>
-                <div class="form-card-body">
-                    <input type="hidden" id="edit-id">
-
-                    <!-- Basic Info -->
-                    <div class="f">
-                        <label>Product Name <span class="req">*</span></label>
-                        <input type="text" id="p-name" placeholder="e.g. Jade Blossom Saree">
+                <div class="fch"><h2 id="fh">➕ Add New Product</h2><span id="eb" style="display:none;background:rgba(255,255,255,0.2);padding:3px 10px;border-radius:50px;font-size:0.72rem;color:#fff;">Editing</span></div>
+                <div class="fcb">
+                    <input type="hidden" id="eid">
+                    <div class="f"><label>Product Name <span class="req">*</span></label><input type="text" id="pn" placeholder="e.g. Jade Blossom Saree"></div>
+                    <div class="fr">
+                        <div class="f"><label>Category <span class="req">*</span></label><select id="pc"><option value="">Select</option><option>Sarees</option><option>Bridal Wear</option><option>Kurtis</option><option>Churidar</option><option>Western Wear</option><option>Couture</option></select></div>
+                        <div class="f"><label>Material <span class="req">*</span></label><select id="pm"><option value="">Select</option><option>Georgette Silk</option><option>Raw Silk</option><option>Pure Kanjivaram Silk</option><option>Banarasi Silk</option><option>Cotton Blend</option><option>100% Cotton</option><option>Linen Blend</option><option>Pure Linen</option><option>Rayon</option><option>Satin</option><option>Net</option><option>Chiffon</option><option>Crepe</option><option>Velvet</option><option>Other</option></select></div>
                     </div>
-
-                    <div class="f-row">
-                        <div class="f">
-                            <label>Category <span class="req">*</span></label>
-                            <select id="p-cat">
-                                <option value="">Select category</option>
-                                <option>Sarees</option><option>Bridal Wear</option>
-                                <option>Kurtis</option><option>Churidar</option>
-                                <option>Western Wear</option><option>Couture</option>
-                            </select>
-                        </div>
-                        <div class="f">
-                            <label>Material <span class="req">*</span></label>
-                            <select id="p-material">
-                                <option value="">Select material</option>
-                                <option>Georgette Silk</option><option>Raw Silk</option>
-                                <option>Pure Kanjivaram Silk</option><option>Banarasi Silk</option>
-                                <option>Cotton Blend</option><option>100% Cotton</option>
-                                <option>Linen Blend</option><option>Pure Linen</option>
-                                <option>Rayon</option><option>Satin</option>
-                                <option>Net</option><option>Chiffon</option>
-                                <option>Crepe</option><option>Velvet</option><option>Other</option>
-                            </select>
+                    <div class="f"><label>Description</label><textarea id="pd" placeholder="Describe the product..."></textarea></div>
+                    <div class="f"><label>Care Instructions</label><textarea id="pca" placeholder="e.g. Dry clean only..." style="min-height:55px;"></textarea></div>
+                    <div class="fr">
+                        <div class="f"><label>Price (Rs.) <span class="req">*</span></label><input type="number" id="pp" placeholder="e.g. 8500" min="0"></div>
+                        <div class="f"><label>Sale Price (Rs.)</label><input type="number" id="ps" placeholder="Leave empty if none" min="0"><div class="hint">Only if on discount</div></div>
+                    </div>
+                    <div class="f"><label>Available Sizes</label>
+                        <div class="szc">
+                            <input type="checkbox" class="sch" id="sx" value="XS"><label for="sx">XS</label>
+                            <input type="checkbox" class="sch" id="ss" value="S"><label for="ss">S</label>
+                            <input type="checkbox" class="sch" id="sm" value="M"><label for="sm">M</label>
+                            <input type="checkbox" class="sch" id="sl" value="L"><label for="sl">L</label>
+                            <input type="checkbox" class="sch" id="sxl" value="XL"><label for="sxl">XL</label>
+                            <input type="checkbox" class="sch" id="sxx" value="XXL"><label for="sxx">XXL</label>
+                            <input type="checkbox" class="sch" id="sf" value="Free Size"><label for="sf">Free Size</label>
+                            <input type="checkbox" class="sch" id="sc" value="Custom Stitching"><label for="sc">Custom</label>
                         </div>
                     </div>
-
-                    <div class="f">
-                        <label>Description</label>
-                        <textarea id="p-desc" placeholder="Describe the product — fabric feel, design details, occasion suitability..."></textarea>
+                    <div class="f"><label>Colors (comma separated)</label><input type="text" id="pcl" placeholder="e.g. Red, Gold, Ivory"></div>
+                    <div class="f"><label>Tags (comma separated)</label><input type="text" id="pt" placeholder="e.g. festive, wedding"><div class="hint">Helps customers find the product</div></div>
+                    <div class="fr">
+                        <div class="f"><label>Badge</label><select id="pb"><option value="">None</option><option>New</option><option>Bestseller</option><option>Sale</option></select></div>
+                        <div class="f"><label>Stock</label><select id="pst"><option value="true">✅ In Stock</option><option value="false">❌ Sold Out</option></select></div>
                     </div>
-
-                    <div class="f">
-                        <label>Care Instructions</label>
-                        <textarea id="p-care" placeholder="e.g. Dry clean only. Store in muslin cloth..." style="min-height:60px;"></textarea>
+                    <div class="f"><label>Product Images</label>
+                        <div class="img-zone" id="dz"><input type="file" id="fi" accept="image/*" multiple onchange="handleFiles(event)"><div style="font-size:2rem;margin-bottom:0.3rem;">📷</div><div style="font-size:0.8rem;color:#7a7a7a;"><strong style="color:#4A6B4A;display:block;margin-bottom:2px;">Upload from Device</strong>Click or drag & drop · First image = main</div></div>
+                        <div style="display:flex;align-items:center;gap:0.5rem;margin:0.5rem 0;"><div style="flex:1;height:1px;background:#e0e0e0;"></div><span style="font-size:0.72rem;color:#aaa;white-space:nowrap;">OR paste Cloudinary URL</span><div style="flex:1;height:1px;background:#e0e0e0;"></div></div>
+                        <div class="url-r"><input type="text" id="iu" placeholder="https://res.cloudinary.com/..."><button class="bau" onclick="addUrl()">Add</button></div>
+                        <div class="hint">Use cloudinary.com (free) for image hosting</div>
+                        <div class="img-previews" id="ip"></div>
                     </div>
-
-                    <!-- Pricing -->
-                    <div class="f-row">
-                        <div class="f">
-                            <label>Price (Rs.) <span class="req">*</span></label>
-                            <input type="number" id="p-price" placeholder="e.g. 8500" min="0">
-                        </div>
-                        <div class="f">
-                            <label>Sale Price (Rs.)</label>
-                            <input type="number" id="p-sale-price" placeholder="Leave empty if no sale" min="0">
-                            <div class="f-hint">Fill only if product is on discount</div>
-                        </div>
-                    </div>
-
-                    <!-- Sizes -->
-                    <div class="f">
-                        <label>Available Sizes</label>
-                        <div class="size-checks">
-                            <input type="checkbox" class="size-check" id="sz-xs" value="XS"><label for="sz-xs">XS</label>
-                            <input type="checkbox" class="size-check" id="sz-s"  value="S"><label for="sz-s">S</label>
-                            <input type="checkbox" class="size-check" id="sz-m"  value="M"><label for="sz-m">M</label>
-                            <input type="checkbox" class="size-check" id="sz-l"  value="L"><label for="sz-l">L</label>
-                            <input type="checkbox" class="size-check" id="sz-xl" value="XL"><label for="sz-xl">XL</label>
-                            <input type="checkbox" class="size-check" id="sz-xxl" value="XXL"><label for="sz-xxl">XXL</label>
-                            <input type="checkbox" class="size-check" id="sz-fs"  value="Free Size"><label for="sz-fs">Free Size</label>
-                            <input type="checkbox" class="size-check" id="sz-cs"  value="Custom Stitching"><label for="sz-cs">Custom</label>
-                        </div>
-                    </div>
-
-                    <!-- Colors & Tags -->
-                    <div class="f">
-                        <label>Colors (comma separated)</label>
-                        <input type="text" id="p-colors" placeholder="e.g. Sage Green, Ivory, Gold">
-                    </div>
-                    <div class="f">
-                        <label>Tags (comma separated)</label>
-                        <input type="text" id="p-tags" placeholder="e.g. festive, wedding, silk, casual">
-                        <div class="f-hint">Helps with search — use short keywords</div>
-                    </div>
-
-                    <!-- Badge & Stock -->
-                    <div class="f-row">
-                        <div class="f">
-                            <label>Badge</label>
-                            <select id="p-badge">
-                                <option value="">No Badge</option>
-                                <option>New</option><option>Bestseller</option><option>Sale</option>
-                            </select>
-                        </div>
-                        <div class="f">
-                            <label>Stock Status</label>
-                            <select id="p-stock">
-                                <option value="true">✅ In Stock</option>
-                                <option value="false">❌ Sold Out</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <!-- Image Upload -->
-                    <div class="f">
-                        <label>Product Images</label>
-
-                        <!-- File upload -->
-                        <div class="img-upload-area" id="drop-zone">
-                            <input type="file" id="img-file-input" accept="image/*" multiple onchange="handleFileUpload(event)">
-                            <div class="img-upload-icon">📷</div>
-                            <div class="img-upload-text">
-                                <strong>Upload from Device</strong>
-                                Click or drag & drop images here<br>
-                                <span style="color:#C9A84C;font-size:0.7rem;">First image will be the main display photo</span>
-                            </div>
-                        </div>
-
-                        <!-- URL input for Cloudinary / external -->
-                        <div style="margin:0.6rem 0;display:flex;align-items:center;gap:0.5rem;">
-                            <div style="flex:1;height:1px;background:#e0e0e0;"></div>
-                            <span style="font-size:0.72rem;color:#aaa;white-space:nowrap;">OR paste image URL</span>
-                            <div style="flex:1;height:1px;background:#e0e0e0;"></div>
-                        </div>
-                        <div class="url-input-row">
-                            <input type="text" id="img-url-input" placeholder="https://res.cloudinary.com/... or any image URL">
-                            <button class="btn-add-url" onclick="addImageUrl()">Add</button>
-                        </div>
-                        <div class="f-hint">Tip: Use Cloudinary.com (free) for best image hosting</div>
-
-                        <!-- Previews -->
-                        <div class="img-previews" id="img-previews"></div>
-                    </div>
-
-                    <div class="form-actions">
-                        <button class="btn-save-prod" onclick="saveProduct()">💾 Save Product</button>
-                        <button class="btn-reset" onclick="resetForm()">Clear</button>
+                    <div class="fa">
+                        <button class="bs" id="bsv" onclick="saveProduct()"><span id="si">💾</span><span id="st">Save Product</span></button>
+                        <button class="br" onclick="resetForm()">Clear</button>
                     </div>
                 </div>
             </div>
-
-            <!-- ── TABLE ── -->
             <div class="table-card">
-                <div class="table-topbar">
+                <div class="ttb">
                     <h2>All Products</h2>
-                    <input class="search-input" type="text" placeholder="🔍 Search..." oninput="filterTable(this.value)">
-                    <select class="filter-select" id="cat-filter" onchange="filterTable(document.querySelector('.search-input').value)">
-                        <option value="">All Categories</option>
-                        <option>Sarees</option><option>Bridal Wear</option>
-                        <option>Kurtis</option><option>Churidar</option>
-                        <option>Western Wear</option><option>Couture</option>
-                    </select>
+                    <input class="si" type="text" placeholder="🔍 Search..." oninput="filterTbl(this.value)">
+                    <select class="fs" id="cf" onchange="filterTbl(document.querySelector('.si').value)"><option value="">All Categories</option><option>Sarees</option><option>Bridal Wear</option><option>Kurtis</option><option>Churidar</option><option>Western Wear</option><option>Couture</option></select>
+                    <button class="brr" onclick="refreshSheet()">🔄 Refresh</button>
                 </div>
-                <div class="table-scroll">
-                    <table>
-                        <thead>
-                        <tr>
-                            <th>Photo</th><th>Product</th><th>Material</th>
-                            <th>Price</th><th>Sizes</th><th>Badge</th><th>Stock</th><th>Actions</th>
-                        </tr>
-                        </thead>
-                        <tbody id="products-tbody"></tbody>
-                    </table>
-                </div>
+                <div class="tsc"><table><thead><tr><th>Photo</th><th>Product</th><th>Material</th><th>Price</th><th>Sizes</th><th>Badge</th><th>Stock</th><th>Actions</th></tr></thead><tbody id="tb"></tbody></table></div>
             </div>
-
         </div>
     </div>
 </div>
 
-<!-- Confirm Dialog -->
-<div class="confirm-overlay" id="confirm-overlay">
-    <div class="confirm-box">
-        <div style="font-size:2.5rem;margin-bottom:0.8rem;">🗑</div>
-        <h3>Delete Product?</h3>
-        <p id="confirm-msg">This cannot be undone.</p>
-        <div class="confirm-actions">
-            <button class="btn-confirm-yes" onclick="confirmDelete()">Yes, Delete</button>
-            <button class="btn-confirm-no" onclick="cancelDelete()">Cancel</button>
-        </div>
-    </div>
-</div>
-
-<!-- Toast -->
+<div class="svo" id="svo"><div class="sp"></div><div class="sm" id="smsg">Saving...</div></div>
+<div class="co" id="co"><div class="cb"><div style="font-size:2.5rem;margin-bottom:0.8rem;">🗑</div><h3>Delete Product?</h3><p id="cmsg">This cannot be undone.</p><div class="ca"><button class="cy" onclick="confirmDel()">Yes, Delete</button><button class="cn" onclick="cancelDel()">Cancel</button></div></div></div>
 <div class="toast" id="toast"></div>
 
-<script src="../js/products.js"></script>
 <script>
-    // ── State ────────────────────────────────────────────────────────────────────
-    let currentImages  = [];   // Array of {src: string, type: 'file'|'url'}
-    let pendingDeleteId = null;
+    // ── CREDENTIALS ──────────────────────────────────────────────────────────────
+    const AU="rounik", AP="rounik@2026";
+    const SK='rounik_admin_auth', AK='rounik_script_url';
 
+    // ── AUTH ─────────────────────────────────────────────────────────────────────
+    let fa=0,lt=null;
+    function checkSession(){const s=JSON.parse(sessionStorage.getItem(SK)||'null');if(s&&s.l&&(Date.now()-s.t)/60000<60){showAdmin();}else{sessionStorage.removeItem(SK);document.getElementById('ls').style.display='flex';setTimeout(()=>document.getElementById('lu').focus(),100);}}
+    function doLogin(){if(lt)return;const u=document.getElementById('lu').value.trim(),p=document.getElementById('lp').value,er=document.getElementById('ler');er.classList.remove('show');['lu','lp'].forEach(id=>document.getElementById(id).classList.remove('le'));if(!u||!p){er.textContent='⚠️ Enter both fields.';er.classList.add('show');return;}if(u===AU&&p===AP){fa=0;sessionStorage.setItem(SK,JSON.stringify({l:true,t:Date.now()}));const c=document.getElementById('lcard');c.style.transition='all 0.4s';c.style.transform='scale(0.95)';c.style.opacity='0';setTimeout(()=>{document.getElementById('ls').style.display='none';showAdmin();},400);}else{fa++;['lu','lp'].forEach(id=>document.getElementById(id).classList.add('le'));document.getElementById('lp').value='';const c=document.getElementById('lcard');c.classList.remove('shk');void c.offsetWidth;c.classList.add('shk');if(fa>=5){startLock(30);}else{const r=5-fa;er.textContent=`❌ Wrong credentials. ${r} attempt${r!==1?'s':''} left.`;er.classList.add('show');}}}
+    function startLock(s){const lk=document.getElementById('llk'),ti=document.getElementById('lt'),btn=document.getElementById('lbtn');lk.classList.add('show');btn.disabled=true;['lu','lp'].forEach(id=>{document.getElementById(id).disabled=true;});let r=s;ti.textContent=r;lt=setInterval(()=>{r--;ti.textContent=r;if(r<=0){clearInterval(lt);lt=null;fa=0;lk.classList.remove('show');btn.disabled=false;['lu','lp'].forEach(id=>{document.getElementById(id).disabled=false;document.getElementById(id).classList.remove('le');});document.getElementById('lu').focus();}},1000);}
+    function togglePw(){const i=document.getElementById('lp'),b=document.querySelector('.pt');i.type=i.type==='password'?'text':'password';b.textContent=i.type==='password'?'👁':'🙈';}
+    function logout(){sessionStorage.removeItem(SK);location.reload();}
+    function showAdmin(){document.getElementById('admin').style.display='block';initAdmin();}
 
+    // ── SHEET CONNECTION ──────────────────────────────────────────────────────────
+    let SURL=localStorage.getItem(AK)||'', prods=[];
+    function initAdmin(){if(SURL){document.getElementById('sbanner').classList.add('hidden');document.getElementById('asurl').value=SURL;loadSheet();}else{loadLocal();}setupDrop();}
+    function connectSheet(){const u=document.getElementById('asurl').value.trim();if(!u.startsWith('https://script.google.com')){toast('⚠️ Paste a valid Apps Script URL',true);return;}SURL=u;localStorage.setItem(AK,u);document.getElementById('sbanner').classList.add('hidden');toast('✅ Connected! Loading from Google Sheets...');loadSheet();}
+    async function loadSheet(){if(!SURL){loadLocal();return;}showSv('Loading from Google Sheets...');try{const r=await fetch(SURL+'?action=getAll&t='+Date.now());const d=await r.json();if(d.success&&Array.isArray(d.products)){prods=d.products;renderTbl();renderStats();toast(`✅ ${prods.length} products loaded`,'','ok');}else throw new Error(d.error||'Error');}catch(e){toast('⚠️ Sheet unreachable. Using local data.',true);loadLocal();}finally{hideSv();}}
+    function loadLocal(){try{const s=localStorage.getItem('rounik_products');prods=s?JSON.parse(s):[];}catch{prods=[];}renderTbl();renderStats();}
+    async function saveToSheet(prod,action){if(!SURL){saveLocal(prod,action);return true;}showSv(action==='delete'?'Deleting...':'Saving to Google Sheets...');try{const r=await fetch(SURL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action,product:prod})});const d=await r.json();if(!d.success)throw new Error(d.error);return true;}catch(e){saveLocal(prod,action);toast('⚠️ Sheet save failed. Saved locally.',true);return false;}finally{hideSv();}}
+    function saveLocal(prod,action){let p=JSON.parse(localStorage.getItem('rounik_products')||'[]');if(action==='delete')p=p.filter(x=>x.id!==prod.id);else{const i=p.findIndex(x=>x.id===prod.id);if(i!==-1)p[i]=prod;else p.unshift(prod);}localStorage.setItem('rounik_products',JSON.stringify(p));}
+    async function refreshSheet(){await loadSheet();}
 
+    // ── IMAGES ────────────────────────────────────────────────────────────────────
+    let imgs=[];
+    function handleFiles(e){Array.from(e.target.files).forEach(f=>{const r=new FileReader();r.onload=ev=>{imgs.push({s:ev.target.result,t:'f'});renderPrev();};r.readAsDataURL(f);});e.target.value='';}
+    function addUrl(){const u=document.getElementById('iu').value.trim();if(!u.startsWith('http')){toast('⚠️ Enter a valid URL',true);return;}imgs.push({s:u,t:'u'});renderPrev();document.getElementById('iu').value='';}
+    function renderPrev(){const c=document.getElementById('ip');c.innerHTML='';imgs.forEach((img,i)=>{const d=document.createElement('div');d.className='ipi'+(i===0?' pm':'');d.innerHTML=`<img src="${img.s}" onerror="this.src='https://via.placeholder.com/70x85'">${i===0?'<div class="pb">Main</div>':''}<button class="ri" onclick="rmImg(${i})">✕</button>`;c.appendChild(d);});}
+    function rmImg(i){imgs.splice(i,1);renderPrev();}
+    function setupDrop(){const z=document.getElementById('dz');if(!z)return;z.addEventListener('dragover',e=>{e.preventDefault();z.classList.add('dg');});z.addEventListener('dragleave',()=>z.classList.remove('dg'));z.addEventListener('drop',e=>{e.preventDefault();z.classList.remove('dg');Array.from(e.dataTransfer.files).filter(f=>f.type.startsWith('image/')).forEach(f=>{const r=new FileReader();r.onload=ev=>{imgs.push({s:ev.target.result,t:'f'});renderPrev();};r.readAsDataURL(f);});});}
 
-    // ── Stats ─────────────────────────────────────────────────────────────────────
-    function renderStats() {
-        const products = getProducts();
-        const total   = products.length;
-        const inStock = products.filter(p => p.inStock).length;
-        const sold    = products.filter(p => !p.inStock).length;
-        const cats    = new Set(products.map(p => p.category)).size;
-        const onSale  = products.filter(p => p.discountedPrice && p.discountedPrice < p.price).length;
-        document.getElementById('stats-row').innerHTML = `
-    <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-label">Total Products</div></div>
-    <div class="stat-card gold"><div class="stat-num">${inStock}</div><div class="stat-label">In Stock</div></div>
-    <div class="stat-card red"><div class="stat-num">${sold}</div><div class="stat-label">Sold Out</div></div>
-    <div class="stat-card blue"><div class="stat-num">${onSale}</div><div class="stat-label">On Sale</div></div>
-    <div class="stat-card"><div class="stat-num">${cats}</div><div class="stat-label">Categories</div></div>
-  `;
+    // ── FORM ──────────────────────────────────────────────────────────────────────
+    function getSz(){return['sx','ss','sm','sl','sxl','sxx','sf','sc'].filter(id=>document.getElementById(id)?.checked).map(id=>document.getElementById(id).value);}
+    function setSz(sz){['sx','ss','sm','sl','sxl','sxx','sf','sc'].forEach(id=>{const el=document.getElementById(id);if(el)el.checked=(sz||[]).includes(el.value);});}
+    async function saveProduct(){
+        const n=document.getElementById('pn').value.trim(),c=document.getElementById('pc').value,m=document.getElementById('pm').value,pr=Number(document.getElementById('pp').value);
+        if(!n){toast('⚠️ Product name required',true);return;}
+        if(!c){toast('⚠️ Select a category',true);return;}
+        if(!m){toast('⚠️ Select a material',true);return;}
+        if(!pr||pr<=0){toast('⚠️ Enter a valid price',true);return;}
+        if(!imgs.length){toast('⚠️ Add at least one product image',true);return;}
+        const sp=Number(document.getElementById('ps').value)||null,eid=document.getElementById('eid').value;
+        const prod={id:eid||'P'+Date.now(),name:n,category:c,material:m,price:pr,discountedPrice:(sp&&sp<pr)?sp:null,description:document.getElementById('pd').value.trim(),care:document.getElementById('pca').value.trim(),sizes:getSz(),colors:document.getElementById('pcl').value.split(',').map(s=>s.trim()).filter(Boolean),tags:document.getElementById('pt').value.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean),images:imgs.map(i=>i.s),badge:document.getElementById('pb').value||null,inStock:document.getElementById('pst').value==='true'};
+        document.getElementById('bsv').disabled=true;document.getElementById('st').textContent='Saving...';
+        const ok=await saveToSheet(prod,eid?'update':'save');
+        document.getElementById('bsv').disabled=false;document.getElementById('st').textContent='Save Product';
+        if(eid){const idx=prods.findIndex(p=>p.id===eid);if(idx!==-1)prods[idx]=prod;}else{prods.unshift(prod);}
+        renderTbl();renderStats();resetForm();
+        toast(ok?'✅ Saved to Google Sheets!':'✅ Saved locally',false,ok?'ok':'');
     }
+    function editProduct(id){const p=prods.find(x=>x.id===id);if(!p)return;document.getElementById('eid').value=p.id;document.getElementById('pn').value=p.name;document.getElementById('pc').value=p.category;document.getElementById('pm').value=p.material||'';document.getElementById('pd').value=p.description||'';document.getElementById('pca').value=p.care||'';document.getElementById('pp').value=p.price;document.getElementById('ps').value=p.discountedPrice||'';document.getElementById('pcl').value=(p.colors||[]).join(', ');document.getElementById('pt').value=(p.tags||[]).join(', ');document.getElementById('pb').value=p.badge||'';document.getElementById('pst').value=p.inStock?'true':'false';setSz(p.sizes||[]);imgs=(p.images||[]).map(s=>({s,t:s.startsWith('data:')?'f':'u'}));renderPrev();document.getElementById('fh').textContent='✏️ Edit Product';document.getElementById('eb').style.display='inline';document.querySelector('.form-card').scrollIntoView({behavior:'smooth',block:'start'});}
+    function resetForm(){['eid','pn','pd','pca','pp','ps','pcl','pt'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});['pc','pm','pb'].forEach(id=>document.getElementById(id).value='');document.getElementById('pst').value='true';setSz([]);imgs=[];renderPrev();document.getElementById('fh').textContent='➕ Add New Product';document.getElementById('eb').style.display='none';}
+    async function toggleStock(id){const p=prods.find(x=>x.id===id);if(!p)return;p.inStock=!p.inStock;await saveToSheet(p,'update');renderTbl();renderStats();toast(p.inStock?'✅ Marked In Stock':'📦 Marked Sold Out');}
 
-    // ── Table ─────────────────────────────────────────────────────────────────────
-    function renderTable(products = null) {
-        if (!products) products = getProducts();
-        const tbody = document.getElementById('products-tbody');
-        tbody.innerHTML = '';
-        if (!products.length) {
-            tbody.innerHTML = `<tr><td colspan="8" class="no-data">No products yet. Add your first product using the form!</td></tr>`;
-            return;
-        }
-        products.forEach(p => {
-            const imgSrc = (p.images && p.images[0]) ? p.images[0] : 'https://via.placeholder.com/50x62?text=?';
-            const hasDiscount = p.discountedPrice && p.discountedPrice < p.price;
-            const priceHTML = hasDiscount
-                ? `<div class="td-price">Rs. ${Number(p.discountedPrice).toLocaleString('en-IN')}</div>
-         <div class="td-old-price">Rs. ${Number(p.price).toLocaleString('en-IN')}</div>`
-                : `<div class="td-price">Rs. ${Number(p.price).toLocaleString('en-IN')}</div>`;
-            const badgeMap = {'New':'new-b','Bestseller':'best-b','Sale':'sale-b'};
-            const badgeHTML = p.badge ? `<span class="badge-pill ${badgeMap[p.badge]||''}">${p.badge}</span>` : '—';
-            const stockHTML = p.inStock
-                ? `<span class="badge-pill in">In Stock</span>`
-                : `<span class="badge-pill out">Sold Out</span>`;
-            const sizesDisplay = (p.sizes||[]).slice(0,3).join(', ') + ((p.sizes||[]).length>3?'...':'');
+    // ── DELETE ────────────────────────────────────────────────────────────────────
+    let pendId=null;
+    function promptDel(id,name){pendId=id;document.getElementById('cmsg').textContent=`"${name}" will be permanently removed.`;document.getElementById('co').classList.add('show');}
+    async function confirmDel(){if(!pendId)return;const p=prods.find(x=>x.id===pendId);if(p)await saveToSheet(p,'delete');prods=prods.filter(x=>x.id!==pendId);pendId=null;document.getElementById('co').classList.remove('show');renderTbl();renderStats();toast('🗑 Product deleted.');}
+    function cancelDel(){pendId=null;document.getElementById('co').classList.remove('show');}
 
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-      <td><img src="${imgSrc}" class="td-img" alt="${p.name}" onerror="this.src='https://via.placeholder.com/50x62?text=?'"></td>
-      <td><div class="td-name">${p.name}</div><div class="td-cat">${p.category}</div></td>
-      <td><div class="td-material">${p.material||'—'}</div></td>
-      <td>${priceHTML}</td>
-      <td style="font-size:0.78rem;color:#555;">${sizesDisplay||'—'}</td>
-      <td>${badgeHTML}</td>
-      <td>${stockHTML}</td>
-      <td class="td-actions">
-        <button class="btn-edit-row" onclick="editProduct('${p.id}')">✏ Edit</button>
-        <button class="btn-toggle-row" onclick="toggleStock('${p.id}')">${p.inStock?'Mark Sold':'Mark In Stock'}</button>
-        <button class="btn-del-row" onclick="promptDelete('${p.id}','${p.name.replace(/'/g,"\\'")}')">🗑</button>
-      </td>
-    `;
-            tbody.appendChild(tr);
-        });
-    }
+    // ── TABLE & STATS ─────────────────────────────────────────────────────────────
+    function renderTbl(p=null){if(!p)p=prods;const tb=document.getElementById('tb');tb.innerHTML='';if(!p.length){tb.innerHTML=`<tr><td colspan="8" class="nd">No products yet. Add your first product!</td></tr>`;return;}p.forEach(x=>{const img=(x.images&&x.images[0])?x.images[0]:'https://via.placeholder.com/48x60';const hd=x.discountedPrice&&x.discountedPrice<x.price;const ph=hd?`<div class="tp">Rs. ${Number(x.discountedPrice).toLocaleString('en-IN')}</div><div class="to">Rs. ${Number(x.price).toLocaleString('en-IN')}</div>`:`<div class="tp">Rs. ${Number(x.price).toLocaleString('en-IN')}</div>`;const bm={'New':'nb','Bestseller':'bb','Sale':'sb'};const bh=x.badge?`<span class="pi ${bm[x.badge]||''}">${x.badge}</span>`:'—';const sh=x.inStock?`<span class="pi in">In Stock</span>`:`<span class="pi out">Sold Out</span>`;const tr=document.createElement('tr');tr.innerHTML=`<td><img src="${img}" class="ti" onerror="this.src='https://via.placeholder.com/48x60'" alt="${x.name}"></td><td><div class="tn">${x.name}</div><div class="tc">${x.category}</div></td><td style="font-size:0.8rem;color:#555;">${x.material||'—'}</td><td>${ph}</td><td style="font-size:0.78rem;color:#555;">${(x.sizes||[]).slice(0,3).join(', ')||'—'}</td><td>${bh}</td><td>${sh}</td><td class="tda"><button class="be" onclick="editProduct('${x.id}')">✏ Edit</button><button class="bt" onclick="toggleStock('${x.id}')">${x.inStock?'Sold Out':'In Stock'}</button><button class="bd" onclick="promptDel('${x.id}','${x.name.replace(/'/g,"\\'")}')">🗑</button></td>`;tb.appendChild(tr);});}
+    function filterTbl(q){const cat=document.getElementById('cf').value,qr=(q||'').toLowerCase();let f=prods;if(cat)f=f.filter(p=>p.category===cat);if(qr)f=f.filter(p=>p.name.toLowerCase().includes(qr)||(p.material||'').toLowerCase().includes(qr));renderTbl(f);}
+    function renderStats(){const t=prods.length,i=prods.filter(p=>p.inStock).length,o=prods.filter(p=>!p.inStock).length,s=prods.filter(p=>p.discountedPrice&&p.discountedPrice<p.price).length,c=new Set(prods.map(p=>p.category)).size;document.getElementById('sr').innerHTML=`<div class="sc"><div class="sn">${t}</div><div class="sl">Total Products</div></div><div class="sc g"><div class="sn">${i}</div><div class="sl">In Stock</div></div><div class="sc r"><div class="sn">${o}</div><div class="sl">Sold Out</div></div><div class="sc b"><div class="sn">${s}</div><div class="sl">On Sale</div></div><div class="sc"><div class="sn">${c}</div><div class="sl">Categories</div></div>`;}
 
-    function filterTable(query) {
-        const products = getProducts();
-        const catFilter = document.getElementById('cat-filter').value;
-        const q = (query||'').toLowerCase();
-        let filtered = products;
-        if(catFilter) filtered = filtered.filter(p=>p.category===catFilter);
-        if(q) filtered = filtered.filter(p=>
-            p.name.toLowerCase().includes(q)||
-            p.category.toLowerCase().includes(q)||
-            (p.material||'').toLowerCase().includes(q)||
-            (p.description||'').toLowerCase().includes(q)||
-            (p.tags||[]).join(' ').toLowerCase().includes(q)
-        );
-        renderTable(filtered);
-    }
-
-    // ── Image Handling ────────────────────────────────────────────────────────────
-    function handleFileUpload(e) {
-        const files = Array.from(e.target.files);
-        files.forEach(file => {
-            const reader = new FileReader();
-            reader.onload = ev => {
-                currentImages.push({src: ev.target.result, type: 'file'});
-                renderImagePreviews();
-            };
-            reader.readAsDataURL(file);
-        });
-        e.target.value = ''; // reset so same file can be re-added
-    }
-
-    function addImageUrl() {
-        const input = document.getElementById('img-url-input');
-        const url = input.value.trim();
-        if (!url || !url.startsWith('http')) { showToast('⚠️ Please enter a valid image URL starting with http', true); return; }
-        currentImages.push({src: url, type: 'url'});
-        renderImagePreviews();
-        input.value = '';
-    }
-
-    function renderImagePreviews() {
-        const container = document.getElementById('img-previews');
-        container.innerHTML = '';
-        currentImages.forEach((img, i) => {
-            const div = document.createElement('div');
-            div.className = 'img-prev-item' + (i===0 ? ' primary-img' : '');
-            div.innerHTML = `
-      <img src="${img.src}" alt="Preview ${i+1}" onerror="this.src='https://via.placeholder.com/70x85?text=Error'">
-      ${i===0?'<div class="primary-badge">Main</div>':''}
-      <button class="remove-img" onclick="removeImage(${i})">✕</button>
-    `;
-            container.appendChild(div);
-        });
-    }
-
-    function removeImage(index) {
-        currentImages.splice(index, 1);
-        renderImagePreviews();
-    }
-
-    function setupDragDrop() {
-        const zone = document.getElementById('drop-zone');
-        if (!zone) return;
-        zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('dragover'); });
-        zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
-        zone.addEventListener('drop', e => {
-            e.preventDefault(); zone.classList.remove('dragover');
-            const files = Array.from(e.dataTransfer.files).filter(f => f.type.startsWith('image/'));
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = ev => { currentImages.push({src: ev.target.result, type:'file'}); renderImagePreviews(); };
-                reader.readAsDataURL(file);
-            });
-        });
-    }
-
-    // ── Form Helpers ──────────────────────────────────────────────────────────────
-    function getCheckedSizes() {
-        return ['xs','s','m','l','xl','xxl','fs','cs']
-            .filter(id => document.getElementById(`sz-${id}`)?.checked)
-            .map(id => document.getElementById(`sz-${id}`).value);
-    }
-
-    function setCheckedSizes(sizes) {
-        ['xs','s','m','l','xl','xxl','fs','cs'].forEach(id => {
-            const el = document.getElementById(`sz-${id}`);
-            if (el) el.checked = (sizes||[]).includes(el.value);
-        });
-    }
-
-    function resetForm() {
-        ['edit-id','p-name','p-desc','p-care','p-price','p-sale-price','p-colors','p-tags'].forEach(id => {
-            const el = document.getElementById(id); if(el) el.value = '';
-        });
-        document.getElementById('p-cat').value     = '';
-        document.getElementById('p-material').value = '';
-        document.getElementById('p-badge').value   = '';
-        document.getElementById('p-stock').value   = 'true';
-        setCheckedSizes([]);
-        currentImages = [];
-        renderImagePreviews();
-        document.getElementById('form-heading').textContent = '➕ Add New Product';
-        document.getElementById('edit-badge').style.display = 'none';
-    }
-
-    // ── Save Product ─────────────────────────────────────────────────────────────
-    function saveProduct() {
-        const name  = document.getElementById('p-name').value.trim();
-        const cat   = document.getElementById('p-cat').value;
-        const mat   = document.getElementById('p-material').value;
-        const price = Number(document.getElementById('p-price').value);
-        if (!name) { showToast('⚠️ Product name is required', true); return; }
-        if (!cat)  { showToast('⚠️ Please select a category', true); return; }
-        if (!mat)  { showToast('⚠️ Please select a material', true); return; }
-        if (!price || price <= 0) { showToast('⚠️ Please enter a valid price', true); return; }
-        if (!currentImages.length) { showToast('⚠️ Please add at least one product image', true); return; }
-
-        const salePrice = Number(document.getElementById('p-sale-price').value) || null;
-        const editId    = document.getElementById('edit-id').value;
-        const products  = getProducts();
-
-        const product = {
-            id:              editId || 'P' + Date.now(),
-            name,
-            category:        cat,
-            material:        mat,
-            price,
-            discountedPrice: (salePrice && salePrice < price) ? salePrice : null,
-            description:     document.getElementById('p-desc').value.trim(),
-            care:            document.getElementById('p-care').value.trim(),
-            sizes:           getCheckedSizes(),
-            colors:          document.getElementById('p-colors').value.split(',').map(s=>s.trim()).filter(Boolean),
-            tags:            document.getElementById('p-tags').value.split(',').map(s=>s.trim().toLowerCase()).filter(Boolean),
-            images:          currentImages.map(img => img.src),
-            badge:           document.getElementById('p-badge').value || null,
-            inStock:         document.getElementById('p-stock').value === 'true',
-        };
-
-        if (editId) {
-            const idx = products.findIndex(p => p.id === editId);
-            if (idx !== -1) products[idx] = product;
-            showToast('✅ Product updated successfully!');
-        } else {
-            products.unshift(product);
-            showToast('✅ Product added! It will appear on the website.');
-        }
-
-        saveProducts(products);
-        resetForm();
-        renderTable();
-        renderStats();
-    }
-
-    // ── Edit Product ──────────────────────────────────────────────────────────────
-    function editProduct(id) {
-        const products = getProducts();
-        const p = products.find(x => x.id === id);
-        if (!p) return;
-
-        document.getElementById('edit-id').value        = p.id;
-        document.getElementById('p-name').value         = p.name;
-        document.getElementById('p-cat').value          = p.category;
-        document.getElementById('p-material').value     = p.material || '';
-        document.getElementById('p-desc').value         = p.description || '';
-        document.getElementById('p-care').value         = p.care || '';
-        document.getElementById('p-price').value        = p.price;
-        document.getElementById('p-sale-price').value   = p.discountedPrice || '';
-        document.getElementById('p-colors').value       = (p.colors||[]).join(', ');
-        document.getElementById('p-tags').value         = (p.tags||[]).join(', ');
-        document.getElementById('p-badge').value        = p.badge || '';
-        document.getElementById('p-stock').value        = p.inStock ? 'true' : 'false';
-        setCheckedSizes(p.sizes || []);
-
-        currentImages = (p.images||[]).map(src => ({src, type: src.startsWith('data:') ? 'file' : 'url'}));
-        renderImagePreviews();
-
-        document.getElementById('form-heading').textContent = '✏️ Edit Product';
-        document.getElementById('edit-badge').style.display = 'inline';
-        document.querySelector('.form-card').scrollIntoView({behavior:'smooth', block:'start'});
-    }
-
-    // ── Toggle Stock ──────────────────────────────────────────────────────────────
-    function toggleStock(id) {
-        const products = getProducts();
-        const idx = products.findIndex(p => p.id === id);
-        if (idx === -1) return;
-        products[idx].inStock = !products[idx].inStock;
-        saveProducts(products);
-        renderTable();
-        renderStats();
-        showToast(products[idx].inStock ? '✅ Marked as In Stock' : '📦 Marked as Sold Out');
-    }
-
-    // ── Delete ────────────────────────────────────────────────────────────────────
-    function promptDelete(id, name) {
-        pendingDeleteId = id;
-        document.getElementById('confirm-msg').textContent = `"${name}" will be permanently removed from the website.`;
-        document.getElementById('confirm-overlay').classList.add('show');
-    }
-    function confirmDelete() {
-        if (!pendingDeleteId) return;
-        const products = getProducts().filter(p => p.id !== pendingDeleteId);
-        saveProducts(products);
-        pendingDeleteId = null;
-        document.getElementById('confirm-overlay').classList.remove('show');
-        renderTable(); renderStats();
-        showToast('🗑 Product deleted.');
-    }
-    function cancelDelete() {
-        pendingDeleteId = null;
-        document.getElementById('confirm-overlay').classList.remove('show');
-    }
-
-    // ── Export ────────────────────────────────────────────────────────────────────
-    function exportData() {
-        const data = JSON.stringify(getProducts(), null, 2);
-        const blob = new Blob([data], {type:'application/json'});
-        const a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = `rounik_products_${new Date().toISOString().slice(0,10)}.json`;
-        a.click();
-        showToast('⬇ Products exported as JSON');
-    }
-
-    function resetToDefaults() {
-        if (!confirm('Reset ALL products to default sample data? This will remove any products you added.')) return;
-        localStorage.removeItem('rounik_products');
-        location.reload();
-    }
-
-    // ── Toast ────────────────────────────────────────────────────────────────────
-    function showToast(msg, isError=false) {
-        const t = document.getElementById('toast');
-        t.textContent = msg;
-        t.className = 'toast show' + (isError?' error':'');
-        clearTimeout(t._timer);
-        t._timer = setTimeout(()=>t.classList.remove('show'), 3500);
-    }
-
-    // ══════════════════════════════════════════════════════════════════════════════
-    // AUTH SYSTEM
-    // ══════════════════════════════════════════════════════════════════════════════
-
-    // ── Credentials — change these to your preferred username & password ──────────
-    const ADMIN_USERNAME = "rounik";
-    const ADMIN_PASSWORD = "rounik@2026";
-    // ─────────────────────────────────────────────────────────────────────────────
-
-    const SESSION_KEY  = 'rounik_admin_auth';
-    const SESSION_MINS = 60; // auto logout after 60 minutes of inactivity
-    let failedAttempts = 0;
-    let lockoutTimer   = null;
-
-    function checkSession() {
-        const session = JSON.parse(sessionStorage.getItem(SESSION_KEY) || 'null');
-        if (session && session.loggedIn) {
-            const elapsed = (Date.now() - session.timestamp) / 1000 / 60;
-            if (elapsed < SESSION_MINS) {
-                showAdminPanel();
-                return;
-            } else {
-                sessionStorage.removeItem(SESSION_KEY);
-            }
-        }
-        // Show login screen
-        document.getElementById('login-screen').style.display = 'flex';
-        document.getElementById('admin-wrap').style.display = 'none';
-        setTimeout(() => document.getElementById('login-username').focus(), 100);
-    }
-
-    function doLogin() {
-        if (lockoutTimer) return; // locked out
-
-        const username = document.getElementById('login-username').value.trim();
-        const password = document.getElementById('login-password').value;
-        const errEl    = document.getElementById('login-error');
-        const uInput   = document.getElementById('login-username');
-        const pInput   = document.getElementById('login-password');
-
-        errEl.classList.remove('show');
-        uInput.classList.remove('error');
-        pInput.classList.remove('error');
-
-        if (!username || !password) {
-            errEl.textContent = '⚠️ Please enter both username and password.';
-            errEl.classList.add('show');
-            return;
-        }
-
-        if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-            // ✅ Correct credentials
-            failedAttempts = 0;
-            sessionStorage.setItem(SESSION_KEY, JSON.stringify({
-                loggedIn: true,
-                timestamp: Date.now()
-            }));
-            // Animate out login screen
-            const card = document.getElementById('login-card');
-            card.style.transition = 'all 0.4s ease';
-            card.style.transform  = 'scale(0.95)';
-            card.style.opacity    = '0';
-            setTimeout(() => {
-                document.getElementById('login-screen').style.display = 'none';
-                showAdminPanel();
-            }, 400);
-        } else {
-            // ❌ Wrong credentials
-            failedAttempts++;
-            uInput.classList.add('error');
-            pInput.classList.add('error');
-            pInput.value = '';
-
-            const card = document.getElementById('login-card');
-            card.classList.remove('shake');
-            void card.offsetWidth; // reset animation
-            card.classList.add('shake');
-
-            if (failedAttempts >= 5) {
-                // Lockout for 30 seconds
-                startLockout(30);
-            } else {
-                const remaining = 5 - failedAttempts;
-                errEl.textContent = `❌ Incorrect username or password. ${remaining} attempt${remaining !== 1 ? 's' : ''} remaining.`;
-                errEl.classList.add('show');
-            }
-        }
-    }
-
-    function startLockout(seconds) {
-        const lockedEl  = document.getElementById('login-locked');
-        const errEl     = document.getElementById('login-error');
-        const btn       = document.getElementById('login-btn');
-        const timerEl   = document.getElementById('lockdown-timer');
-        const uInput    = document.getElementById('login-username');
-        const pInput    = document.getElementById('login-password');
-
-        errEl.classList.remove('show');
-        lockedEl.classList.add('show');
-        btn.disabled    = true;
-        uInput.disabled = true;
-        pInput.disabled = true;
-
-        let remaining = seconds;
-        timerEl.textContent = remaining;
-
-        lockoutTimer = setInterval(() => {
-            remaining--;
-            timerEl.textContent = remaining;
-            if (remaining <= 0) {
-                clearInterval(lockoutTimer);
-                lockoutTimer   = null;
-                failedAttempts = 0;
-                lockedEl.classList.remove('show');
-                btn.disabled    = false;
-                uInput.disabled = false;
-                pInput.disabled = false;
-                uInput.classList.remove('error');
-                pInput.classList.remove('error');
-                uInput.focus();
-            }
-        }, 1000);
-    }
-
-    function showAdminPanel() {
-        document.getElementById('admin-wrap').style.display = 'grid';
-        renderStats();
-        renderTable();
-        setupDragDrop();
-    }
-
-    function togglePwVisibility() {
-        const input = document.getElementById('login-password');
-        const btn   = document.querySelector('.show-pw-btn');
-        if (input.type === 'password') {
-            input.type = 'text';
-            btn.textContent = '🙈';
-        } else {
-            input.type = 'password';
-            btn.textContent = '👁';
-        }
-    }
-
-    function logout() {
-        sessionStorage.removeItem(SESSION_KEY);
-        location.reload();
-    }
-
-    // ── Start ─────────────────────────────────────────────────────────────────────
-    document.addEventListener('DOMContentLoaded', () => {
-        checkSession();
-    });
+    // ── UTILS ─────────────────────────────────────────────────────────────────────
+    function showSv(m){document.getElementById('smsg').textContent=m;document.getElementById('svo').classList.add('show');}
+    function hideSv(){document.getElementById('svo').classList.remove('show');}
+    function toast(msg,isErr=false,type=''){const t=document.getElementById('toast');t.textContent=msg;t.className='toast show'+(isErr?' err':'')+(type==='ok'?' ok':'');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),3500);}
+    function exportData(){const b=new Blob([JSON.stringify(prods,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=`rounik_${new Date().toISOString().slice(0,10)}.json`;a.click();toast('⬇ Exported');}
+    document.addEventListener('DOMContentLoaded',checkSession);
 </script>
 </body>
 </html>

@@ -1,0 +1,135 @@
+═══════════════════════════════════════════════════════════════════
+ROUNIK — Google Sheets Live Sync Setup
+Prepared by MarketMagix Studio
+═══════════════════════════════════════════════════════════════════
+
+WHY THIS IS NEEDED
+──────────────────
+The previous system saved products in the browser only (localStorage).
+This means if Ruchi added products on her phone, they would not appear
+for customers visiting on another device.
+
+This new system saves all products to Google Sheets — a free cloud
+database. Every device, every browser sees the same live products.
+
+TOTAL SETUP TIME: ~15 minutes
+═══════════════════════════════════════════════════════════════════
+
+STEP 1 — CREATE A GOOGLE SHEET
+────────────────────────────────
+1. Go to sheets.google.com
+2. Click the big  +  button to create a new blank sheet
+3. Name it:  ROUNIK Products
+4. Leave it open — you'll need it in Step 3
+
+
+STEP 2 — OPEN APPS SCRIPT
+──────────────────────────
+1. In your Google Sheet, click  Extensions  in the top menu
+2. Click  Apps Script
+3. A new tab opens with a code editor
+4. DELETE all the existing code in the editor (select all, delete)
+
+
+STEP 3 — PASTE THE SCRIPT CODE
+────────────────────────────────
+1. Open the file  APPS_SCRIPT_CODE.js  (included in your project folder)
+2. Select ALL the code (Ctrl+A)
+3. Copy it (Ctrl+C)
+4. Go back to the Apps Script tab
+5. Paste the code (Ctrl+V)
+6. Click the  💾 Save  button (or Ctrl+S)
+7. Name your project:  ROUNIK Admin
+
+
+STEP 4 — DEPLOY THE SCRIPT
+────────────────────────────
+1. Click the blue  Deploy  button (top right)
+2. Select  New deployment
+3. Click the gear ⚙ icon next to "Type" → select  Web app
+4. Fill in the settings:
+   - Description:  ROUNIK Product API
+   - Execute as:   Me
+   - Who has access:  Anyone
+5. Click  Deploy
+6. Google will ask you to Authorise — click  Authorise
+7. Choose your Google account
+8. You may see a "This app isn't verified" screen — click  Advanced
+   then click  Go to ROUNIK Admin (unsafe)  — this is safe, it's your own script
+9. Click  Allow
+10. COPY the Web App URL that appears — it looks like:
+    https://script.google.com/macros/s/AKfycb.../exec
+
+
+STEP 5 — CONNECT TO ADMIN PANEL
+──────────────────────────────────
+1. Go to your Admin Panel:  yourdomain.com/admin/
+2. You will see a yellow setup banner at the top
+3. Paste the Web App URL you copied
+4. Click  Save & Connect
+5. The admin panel will load all products from your Sheet!
+
+
+STEP 6 — SET UP GOOGLE SHEET COLUMNS (Auto-Done!)
+───────────────────────────────────────────────────
+When you add your first product through the Admin Panel, the script
+will automatically create the correct column headers in your Sheet:
+
+id | name | category | material | price | sale_price | description |
+care_instructions | sizes | colors | tags | image1 | image2 | image3 |
+badge | in_stock
+
+You can VIEW your products directly in the Sheet — but always ADD,
+EDIT and DELETE through the Admin Panel to keep data formatted correctly.
+
+
+HOW IT WORKS AFTER SETUP
+─────────────────────────
+Ruchi adds product in Admin Panel
+         ↓
+Admin Panel sends data to Google Apps Script
+         ↓
+Apps Script saves to Google Sheet (cloud)
+         ↓
+Website fetches from Google Sheet on every page load
+         ↓
+All customers on any device see updated products ✅
+
+
+ALSO UPDATE products.js
+────────────────────────
+1. Open js/products.js in IntelliJ
+2. Find this line near the top:
+   const SHEET_CSV_URL = "YOUR_GOOGLE_SHEET_CSV_URL_HERE";
+
+3. Go to your Google Sheet
+4. Click  File → Share → Publish to web
+5. In the dropdown, select your  Products  sheet
+6. Change format to  CSV
+7. Click  Publish  and copy the URL
+8. Paste that URL in place of YOUR_GOOGLE_SHEET_CSV_URL_HERE
+9. Save the file, push to GitHub
+
+This makes the customer website read products live from the Sheet.
+
+
+TROUBLESHOOTING
+───────────────
+Problem: "Could not reach Google Sheet"
+Fix: Re-deploy the Apps Script with the same settings
+
+Problem: Products show on admin but not on website
+Fix: Make sure SHEET_CSV_URL is set correctly in products.js
+
+Problem: "This app isn't verified" during authorisation
+Fix: This is normal — click Advanced → Go to ROUNIK Admin → Allow
+
+Problem: Admin panel shows old products after adding new one
+Fix: Click the  🔄 Sync Sheet  button in the admin nav bar
+
+
+SUPPORT
+───────
+MarketMagix Studio — 15 days post-launch support included
+WhatsApp us with a screenshot of any error you see.
+═══════════════════════════════════════════════════════════════════
