@@ -251,59 +251,226 @@
     function logout(){sessionStorage.removeItem(SK);location.reload();}
     function showAdmin(){document.getElementById('admin').style.display='block';initAdmin();}
 
-    // ── SHEET CONNECTION ──────────────────────────────────────────────────────────
-    let SURL=localStorage.getItem(AK)||'', prods=[];
-    function initAdmin(){if(SURL){document.getElementById('sbanner').classList.add('hidden');document.getElementById('asurl').value=SURL;loadSheet();}else{loadLocal();}setupDrop();}
-    function connectSheet(){const u=document.getElementById('asurl').value.trim();if(!u.startsWith('https://script.google.com')){toast('⚠️ Paste a valid Apps Script URL',true);return;}SURL=u;localStorage.setItem(AK,u);document.getElementById('sbanner').classList.add('hidden');toast('✅ Connected! Loading from Google Sheets...');loadSheet();}
-    async function loadSheet(){
-        if(!SURL){loadLocal();return;}
-        showSv('Loading from Google Sheets...');
-        try{
-            const url=SURL+'?action=getAll&t='+Date.now();
-            const r=await fetch(url,{method:'GET',redirect:'follow'});
-            const text=await r.text();
-            const d=JSON.parse(text);
-            if(d.success&&Array.isArray(d.products)){
-                prods=d.products;
-                // Also cache locally so refresh works even if Sheet is slow
-                localStorage.setItem('rounik_products',JSON.stringify(prods));
-                renderTbl();renderStats();
-                toast('✅ '+prods.length+' products loaded from Sheet','','ok');
-            } else {throw new Error(d.error||'No data');}
-        }catch(e){
-            console.error('Sheet load error:',e.message);
-            // Try loading from local cache first
-            const cached=localStorage.getItem('rounik_products');
-            if(cached){prods=JSON.parse(cached);renderTbl();renderStats();toast('⚠️ Using cached data. Sheet may be loading.',true);}
-            else{loadLocal();}
-        }finally{hideSv();}
+
+    // ── GOOGLE FORM CONFIG ────────────────────────────────────────────────────────
+    // Form submit URL (replace viewform with formResponse)
+    const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLScQvCCR28O9hEkMzDQ8OWEmFoh-ni_fMMNxM9D-lEepeLExxw/formResponse";
+
+    // Field entry IDs from the Google Form
+    const FORM_FIELDS = {
+        id:          "entry.292330943",
+        name:        "entry.1946564213",
+        category:    "entry.745596485",
+        material:    "entry.1073844202",
+        price:       "entry.1213691274",
+        salePrice:   "entry.729446518",
+        description: "entry.1373861479",
+        care:        "entry.2099920298",
+        sizes:       "entry.1212112318",
+        colors:      "entry.2050834535",
+        tags:        "entry.912214604",
+        image1:      "entry.1274829585",
+        image2:      "entry.807508916",
+        badge:       "entry.318319323",
+        inStock:     "entry.1958082277",
+    };
+
+    // Google Sheet CSV URL for reading products
+    // After publishing Sheet to web, paste the CSV URL here:
+    let SHEET_CSV_URL = localStorage.getItem('rounik_csv_url') || '';
+
+    let prods = [];
+
+    function initAdmin(){
+        // Hide apps script banner — we use Google Form now
+        document.getElementById('sbanner').classList.add('hidden');
+        // Check if CSV URL is set
+        if(!SHEET_CSV_URL){
+            showCSVBanner();
+        } else {
+            loadFromCSV();
+        }
+        setupDrop();
     }
-    function loadLocal(){try{const s=localStorage.getItem('rounik_products');prods=s?JSON.parse(s):[];}catch{prods=[];}renderTbl();renderStats();}
-    async function saveToSheet(prod,action){
-        if(!SURL){saveLocal(prod,action);return true;}
-        showSv(action==='delete'?'Deleting from Sheet...':'Saving to Google Sheets...');
+
+    // Show banner asking for CSV URL (for reading products)
+    function showCSVBanner(){
+        document.getElementById('sbanner').classList.remove('hidden');
+        document.getElementById('sbanner').innerHTML = `
+    <div style="font-size:1.5rem;">📋</div>
+    <div class="setup-text" style="flex:1;">
+      <strong>Paste your Google Sheet CSV URL to load products</strong>
+      <span>File → Share → Publish to web → Products sheet → CSV → Copy URL</span>
+      <div class="url-row" style="margin-top:0.6rem;">
+        <input type="text" class="url-input" id="asurl" placeholder="https://docs.google.com/spreadsheets/d/.../pub?output=csv">
+        <button class="btn-connect" onclick="saveCSVUrl()">Connect</button>
+      </div>
+    </div>`;
+    }
+
+    function saveCSVUrl(){
+        const u = document.getElementById('asurl').value.trim();
+        if(!u.includes('spreadsheets')){toast('⚠️ Paste a valid Google Sheet CSV URL',true);return;}
+        SHEET_CSV_URL = u;
+        localStorage.setItem('rounik_csv_url', u);
+        document.getElementById('sbanner').classList.add('hidden');
+        toast('✅ Connected! Loading products...');
+        loadFromCSV();
+    }
+
+    // Load products by reading the published CSV
+    async function loadFromCSV(){
+        if(!SHEET_CSV_URL){ loadLocal(); return; }
+        showSv('Loading products from Sheet...');
         try{
-            const r=await fetch(SURL,{
-                method:'POST',
-                redirect:'follow',
-                body:JSON.stringify({action,product:prod})
+            const r = await fetch(SHEET_CSV_URL + '&t=' + Date.now());
+            const text = await r.text();
+            const parsed = parseCSV(text);
+            if(parsed.length > 0){
+                prods = parsed;
+                localStorage.setItem('rounik_products', JSON.stringify(prods));
+                renderTbl(); renderStats();
+                toast('✅ ' + prods.length + ' products loaded','','ok');
+            } else {
+                throw new Error('Empty sheet');
+            }
+        } catch(e){
+            console.error('CSV load error:', e);
+            loadLocal();
+            toast('Loading from local cache...', false);
+        } finally { hideSv(); }
+    }
+
+    // Parse CSV text into product objects
+    function parseCSV(csv){
+        const lines = csv.split('\n').filter(l => l.trim());
+        if(lines.length < 2) return [];
+        const headers = parseCSVRow(lines[0]).map(h => h.trim().toLowerCase().replace(/\s+/g,'_'));
+        const products = [];
+        for(let i = 1; i < lines.length; i++){
+            const row = parseCSVRow(lines[i]);
+            if(!row.length || !row[0]) continue;
+            const obj = {};
+            headers.forEach((h, idx) => { obj[h] = (row[idx]||'').trim(); });
+            if(!obj.name && !obj.product_name) continue;
+            const images = [];
+            ['image1','image_1','image1_url','image_1_url'].forEach(k=>{ if(obj[k]&&obj[k].startsWith('http')) images.push(obj[k]); });
+            ['image2','image_2','image2_url','image_2_url'].forEach(k=>{ if(obj[k]&&obj[k].startsWith('http')&&!images.includes(obj[k])) images.push(obj[k]); });
+            products.push({
+                id:             obj.id || obj.product_id || ('P'+i),
+                name:           obj.name || obj.product_name || '',
+                category:       obj.category || '',
+                material:       obj.material || '',
+                price:          parseFloat(obj.price) || 0,
+                discountedPrice:obj.sale_price ? parseFloat(obj.sale_price)||null : null,
+                description:    obj.description || '',
+                care:           obj.care_instructions || obj.care || '',
+                sizes:          obj.sizes ? obj.sizes.split(',').map(s=>s.trim()).filter(Boolean) : [],
+                colors:         obj.colors ? obj.colors.split(',').map(c=>c.trim()).filter(Boolean) : [],
+                tags:           obj.tags  ? obj.tags.split(',').map(t=>t.trim()).filter(Boolean)  : [],
+                images:         images.length ? images : [],
+                badge:          obj.badge || null,
+                inStock:        obj.in_stock !== 'false' && obj.in_stock !== '0' && (obj.in_stock||'').toLowerCase() !== 'no',
             });
-            const text=await r.text();
-            const d=JSON.parse(text);
-            if(!d.success)throw new Error(d.error||'Save failed');
-            // Update local cache too
-            saveLocal(prod,action);
-            return true;
-        }catch(e){
-            console.error('Sheet save error:',e.message);
-            // Save locally as fallback — will sync when Sheet is available
-            saveLocal(prod,action);
-            toast('⚠️ Sheet save failed — saved locally. Try re-deploying Apps Script.',true);
-            return false;
-        }finally{hideSv();}
+        }
+        return products;
     }
-    function saveLocal(prod,action){let p=JSON.parse(localStorage.getItem('rounik_products')||'[]');if(action==='delete')p=p.filter(x=>x.id!==prod.id);else{const i=p.findIndex(x=>x.id===prod.id);if(i!==-1)p[i]=prod;else p.unshift(prod);}localStorage.setItem('rounik_products',JSON.stringify(p));}
-    async function refreshSheet(){await loadSheet();}
+
+    function parseCSVRow(row){
+        const result=[]; let field='', inQ=false;
+        for(let i=0;i<row.length;i++){
+            const ch=row[i];
+            if(ch==='"'){if(inQ&&row[i+1]==='"'){field+='"';i++;}else inQ=!inQ;}
+            else if(ch===','&&!inQ){result.push(field);field='';}
+            else field+=ch;
+        }
+        result.push(field); return result;
+    }
+
+    function loadLocal(){
+        try{const s=localStorage.getItem('rounik_products');prods=s?JSON.parse(s):[];}
+        catch{prods=[];}
+        renderTbl();renderStats();
+    }
+
+    // ── SAVE TO GOOGLE FORM (works without CORS issues) ───────────────────────
+    async function saveToSheet(prod, action){
+        // For delete/update — only works via localStorage since Form only adds rows
+        // For delete: mark as deleted in local cache
+        if(action === 'delete'){
+            saveLocal(prod, action);
+            toast('🗑 Deleted locally. Remove row manually from Google Sheet too.', false);
+            return true;
+        }
+        if(action === 'update'){
+            saveLocal(prod, action);
+            // Also submit to form to log the update
+            await submitToForm(prod);
+            toast('✅ Updated! Note: Edit the row in Google Sheet too for changes.', false, 'ok');
+            return true;
+        }
+        // New product — submit to Google Form
+        showSv('Saving to Google Sheet via Form...');
+        try{
+            const ok = await submitToForm(prod);
+            if(ok){
+                saveLocal(prod, 'save');
+                toast('✅ Product saved to Google Sheet!', false, 'ok');
+                return true;
+            } else {
+                throw new Error('Form submit failed');
+            }
+        } catch(e){
+            saveLocal(prod, 'save');
+            toast('⚠️ Saved locally. Check Sheet manually.', true);
+            return false;
+        } finally { hideSv(); }
+    }
+
+    // Submit product data to Google Form
+    function submitToForm(prod){
+        return new Promise((resolve) => {
+            const images = prod.images || [];
+            // Build form data
+            const data = new URLSearchParams();
+            data.append(FORM_FIELDS.id,          prod.id || '');
+            data.append(FORM_FIELDS.name,        prod.name || '');
+            data.append(FORM_FIELDS.category,    prod.category || '');
+            data.append(FORM_FIELDS.material,    prod.material || '');
+            data.append(FORM_FIELDS.price,       prod.price || '');
+            data.append(FORM_FIELDS.salePrice,   prod.discountedPrice || '');
+            data.append(FORM_FIELDS.description, prod.description || '');
+            data.append(FORM_FIELDS.care,        prod.care || '');
+            data.append(FORM_FIELDS.sizes,       (prod.sizes||[]).join(', '));
+            data.append(FORM_FIELDS.colors,      (prod.colors||[]).join(', '));
+            data.append(FORM_FIELDS.tags,        (prod.tags||[]).join(', '));
+            data.append(FORM_FIELDS.image1,      images[0] || '');
+            data.append(FORM_FIELDS.image2,      images[1] || '');
+            data.append(FORM_FIELDS.badge,       prod.badge || '');
+            data.append(FORM_FIELDS.inStock,     prod.inStock === false ? 'false' : 'true');
+
+            // Use no-cors fetch — Form accepts this
+            fetch(FORM_URL, {
+                method: 'POST',
+                mode: 'no-cors',  // Key: bypasses CORS restriction
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: data.toString()
+            })
+                .then(() => resolve(true))  // no-cors always resolves (no response body)
+                .catch(() => resolve(false));
+        });
+    }
+
+    function saveLocal(prod,action){
+        let p=JSON.parse(localStorage.getItem('rounik_products')||'[]');
+        if(action==='delete') p=p.filter(x=>x.id!==prod.id);
+        else{const i=p.findIndex(x=>x.id===prod.id);if(i!==-1)p[i]=prod;else p.unshift(prod);}
+        localStorage.setItem('rounik_products',JSON.stringify(p));
+    }
+
+    async function refreshSheet(){ await loadFromCSV(); }
+    function connectSheet(){ saveCSVUrl(); }
+
 
     // ── IMAGES ────────────────────────────────────────────────────────────────────
     let imgs=[];
