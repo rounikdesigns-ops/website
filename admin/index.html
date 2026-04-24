@@ -180,7 +180,7 @@
                     <input type="hidden" id="eid">
                     <div class="f"><label>Product Name <span class="req">*</span></label><input type="text" id="pn" placeholder="e.g. Jade Blossom Saree"></div>
                     <div class="fr">
-                        <div class="f"><label>Category <span class="req">*</span></label><select id="pc"><option value="">Select</option><option>Sarees</option><option>Bridal Wear</option><option>Kurtis</option><option>Churidar</option><option>Western Wear</option><option>Couture</option></select></div>
+                        <div class="f"><label>Category <span class="req">*</span></label><select id="pc"><option value="">Select</option><option>Kids wear</option><option>Navratri Collection</option><option>Kurtis</option><option>Churidar</option><option>Western Wear</option><option>Couture</option></select></div>
                         <div class="f"><label>Material <span class="req">*</span></label><select id="pm"><option value="">Select</option><option>Georgette Silk</option><option>Raw Silk</option><option>Pure Kanjivaram Silk</option><option>Banarasi Silk</option><option>Cotton Blend</option><option>100% Cotton</option><option>Linen Blend</option><option>Pure Linen</option><option>Rayon</option><option>Satin</option><option>Net</option><option>Chiffon</option><option>Crepe</option><option>Velvet</option><option>Other</option></select></div>
                     </div>
                     <div class="f"><label>Description</label><textarea id="pd" placeholder="Describe the product..."></textarea></div>
@@ -319,27 +319,47 @@
         loadFromCSV();
     }
 
-    // Load products by reading the published CSV
+    // Load products by reading the published CSV — always fresh, never stale cache
     async function loadFromCSV(){
         if(!SHEET_CSV_URL){ loadLocal(); return; }
         showSv('Loading products from Sheet...');
-        try{
-            const r = await fetch(SHEET_CSV_URL + '&t=' + Date.now());
-            const text = await r.text();
-            const parsed = parseCSV(text);
-            if(parsed.length > 0){
-                prods = parsed;
-                localStorage.setItem('rounik_products', JSON.stringify(prods));
-                renderTbl(); renderStats();
-                toast('✅ ' + prods.length + ' products loaded','','ok');
-            } else {
-                throw new Error('Empty sheet');
+
+        // Always clear localStorage first so stale data never shows
+        localStorage.removeItem('rounik_products');
+
+        // Try multiple CORS methods
+        const urls = [
+            SHEET_CSV_URL + '&t=' + Date.now(),
+            `https://api.allorigins.win/raw?url=${encodeURIComponent(SHEET_CSV_URL)}`,
+            `https://corsproxy.io/?${encodeURIComponent(SHEET_CSV_URL)}`,
+        ];
+
+        for(let i = 0; i < urls.length; i++){
+            try{
+                const r = await fetch(urls[i]);
+                if(!r.ok) throw new Error('HTTP ' + r.status);
+                const text = await r.text();
+                const parsed = parseCSV(text);
+                if(parsed.length > 0){
+                    prods = parsed;
+                    // Save clean deduplicated data to cache
+                    localStorage.setItem('rounik_products', JSON.stringify(prods));
+                    renderTbl(); renderStats();
+                    toast('✅ ' + prods.length + ' products loaded','','ok');
+                    hideSv();
+                    return;
+                }
+                throw new Error('Empty after parse');
+            } catch(e){
+                console.warn('Method ' + (i+1) + ' failed:', e.message);
             }
-        } catch(e){
-            console.error('CSV load error:', e);
-            loadLocal();
-            toast('Loading from local cache...', false);
-        } finally { hideSv(); }
+        }
+
+        // All failed
+        hideSv();
+        toast('⚠️ Could not load from Sheet. Check your CSV URL.', true);
+        prods = [];
+        renderTbl(); renderStats();
     }
 
     // Parse CSV text into product objects
@@ -347,17 +367,25 @@
         const lines = csv.split('\n').filter(l => l.trim());
         if(lines.length < 2) return [];
         const headers = parseCSVRow(lines[0]).map(h => h.trim().toLowerCase().replace(/\s+/g,'_'));
-        const products = [];
+
+        // ── Read ALL rows first ───────────────────────────────────────────────
+        const allRows = [];
         for(let i = 1; i < lines.length; i++){
             const row = parseCSVRow(lines[i]);
             if(!row.length || !row[0]) continue;
             const obj = {};
             headers.forEach((h, idx) => { obj[h] = (row[idx]||'').trim(); });
             if(!obj.name && !obj.product_name) continue;
+
             const images = [];
-            ['image1','image_1','image1_url','image_1_url'].forEach(k=>{ if(obj[k]&&obj[k].startsWith('http')) images.push(obj[k]); });
-            ['image2','image_2','image2_url','image_2_url'].forEach(k=>{ if(obj[k]&&obj[k].startsWith('http')&&!images.includes(obj[k])) images.push(obj[k]); });
-            products.push({
+            ['image1','image_1','image1_url','image_1_url'].forEach(k=>{
+                if(obj[k]&&obj[k].startsWith('http')) images.push(obj[k]);
+            });
+            ['image2','image_2','image2_url','image_2_url'].forEach(k=>{
+                if(obj[k]&&obj[k].startsWith('http')&&!images.includes(obj[k])) images.push(obj[k]);
+            });
+
+            allRows.push({
                 id:             obj.id || obj.product_id || ('P'+i),
                 name:           obj.name || obj.product_name || '',
                 category:       obj.category || '',
@@ -368,12 +396,24 @@
                 care:           obj.care_instructions || obj.care || '',
                 sizes:          obj.sizes ? obj.sizes.split(',').map(s=>s.trim()).filter(Boolean) : [],
                 colors:         obj.colors ? obj.colors.split(',').map(c=>c.trim()).filter(Boolean) : [],
-                tags:           obj.tags  ? obj.tags.split(',').map(t=>t.trim()).filter(Boolean)  : [],
+                tags:           obj.tags  ? obj.tags.split(',').map(t=>t.trim()).filter(Boolean) : [],
                 images:         images.length ? images : [],
                 badge:          obj.badge || null,
                 inStock:        obj.in_stock !== 'false' && obj.in_stock !== '0' && (obj.in_stock||'').toLowerCase() !== 'no',
+                isHidden:       (obj.is_hidden||'').toLowerCase() === 'true',
             });
         }
+
+        // ── Deduplicate: LAST row per ID wins (Form appends, so latest = bottom) ──
+        const seen = new Map();
+        for(const p of allRows){
+            seen.set(p.id, p); // overwrites — last entry wins
+        }
+
+        // ── Filter: remove hidden (deleted) products ───────────────────────────
+        const products = Array.from(seen.values()).filter(p => !p.isHidden);
+
+        console.log(`Sheet: ${allRows.length} rows → ${seen.size} unique → ${products.length} visible`);
         return products;
     }
 
@@ -389,9 +429,15 @@
     }
 
     function loadLocal(){
-        try{const s=localStorage.getItem('rounik_products');prods=s?JSON.parse(s):[];}
-        catch{prods=[];}
-        renderTbl();renderStats();
+        try{
+            const s=localStorage.getItem('rounik_products');
+            const all = s ? JSON.parse(s) : [];
+            // Deduplicate and filter hidden from cache too
+            const seen = new Map();
+            for(const p of all){ seen.set(p.id, p); }
+            prods = Array.from(seen.values()).filter(p => !p.isHidden);
+        } catch{ prods=[]; }
+        renderTbl(); renderStats();
     }
 
     // ── SAVE TO GOOGLE FORM (works without CORS issues) ───────────────────────

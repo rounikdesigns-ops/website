@@ -45,7 +45,7 @@ const FALLBACK_PRODUCTS = [
   }
 ];
 
-const CATEGORIES = ["All","Sarees","Bridal Wear","Kurtis","Churidar","Western Wear","Couture"];
+const CATEGORIES = ["All","Kids Wear","Navratri Suit","Kurtis","Churidar","Western Wear","Couture"];
 
 // ── Global product store ──────────────────────────────────────────────────
 let PRODUCTS = [];
@@ -130,8 +130,9 @@ function parseCSV(csv) {
     const image2      = obj['image_2_url']          || obj['image2']      || '';
     const badge       = obj['badge']                || null;
     const inStockRaw  = obj['in_stock']             || 'true';
+    const isHiddenRaw = obj['is_hidden']             || 'false';
 
-    if (!name) continue; // skip empty rows
+    if (!name) continue;
 
     const images = [];
     if (image1 && image1.startsWith('http')) images.push(image1);
@@ -152,12 +153,29 @@ function parseCSV(csv) {
       images:         images.length ? images : ['https://via.placeholder.com/400x500?text=' + encodeURIComponent(name)],
       badge:          badge || null,
       inStock:        inStockRaw.toLowerCase() !== 'false' && inStockRaw !== '0' && inStockRaw.toLowerCase() !== 'no',
+      isHidden:       isHiddenRaw.toLowerCase() === 'true',
     };
 
     products.push(product);
   }
-  console.log("ROUNIK: Loaded", products.length, "products. Categories:", [...new Set(products.map(p=>p.category))]);
-  return products;
+
+  // ── Step 1: Collect all IDs that have ANY hidden row ─────────────────
+  const hiddenIds = new Set();
+  for(const p of products){
+    if(p.isHidden) hiddenIds.add(p.id);
+  }
+
+  // ── Step 2: Keep only visible rows, deduplicated (last wins) ─────────
+  const seen = new Map();
+  for(const p of products){
+    if(!p.isHidden) seen.set(p.id, p);
+  }
+
+  // ── Step 3: Remove products whose ID is in hiddenIds ─────────────────
+  const deduped = Array.from(seen.values()).filter(p => !hiddenIds.has(p.id));
+
+  console.log(`ROUNIK: ${products.length} rows → ${hiddenIds.size} deleted → ${deduped.length} visible`);
+  return deduped;
 }
 
 // Proper CSV row parser (handles quoted fields with commas inside)
