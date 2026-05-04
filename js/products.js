@@ -11,7 +11,7 @@
 // (Full instructions in GOOGLE_SHEETS_SETUP.txt)
 // ═══════════════════════════════════════════════════════════════════════════
 
-const WHATSAPP_NUMBER = "919XXXXXXXXX"; // ← Replace with Ruchi's number
+const WHATSAPP_NUMBER = "917411127345";
 
 // ── Step 1: Paste your Google Sheet published CSV URL here ────────────────
 // Format: https://docs.google.com/spreadsheets/d/YOUR_ID/pub?output=csv
@@ -45,7 +45,7 @@ const FALLBACK_PRODUCTS = [
   }
 ];
 
-const CATEGORIES = ["All","Kids Wear","Navratri Suit","Kurtis","Churidar","Western Wear","Couture"];
+const CATEGORIES = ["All","Kids Wear","Navratri Suit","Indian Wear","Churidar","Western Wear","Couture"];
 
 // ── Global product store ──────────────────────────────────────────────────
 let PRODUCTS = [];
